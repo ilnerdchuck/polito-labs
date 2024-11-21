@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Fri Oct  4 17:01:54 2024
+# Process ID: 31654
+# Current directory: /home/chuck/uni/Torino/Laboratori/Specification/lab_02/lab_02.runs/synth_1
+# Command line: vivado -log Mux2x1.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source Mux2x1.tcl
+# Log file: /home/chuck/uni/Torino/Laboratori/Specification/lab_02/lab_02.runs/synth_1/Mux2x1.vds
+# Journal file: /home/chuck/uni/Torino/Laboratori/Specification/lab_02/lab_02.runs/synth_1/vivado.jou
+# Running On        :Aries-Work
+# Platform          :Fedora
+# Operating System  :Fedora Linux 40 (KDE Plasma)
+# Processor Detail  :AMD Ryzen 5 7640U w/ Radeon 760M Graphics
+# CPU Frequency     :1874.619 MHz
+# CPU Physical cores:6
+# CPU Logical cores :12
+# Host memory       :16026 MB
+# Swap memory       :8589 MB
+# Total Virtual     :24616 MB
+# Available Virtual :19856 MB
+#-----------------------------------------------------------
+source Mux2x1.tcl -notrace

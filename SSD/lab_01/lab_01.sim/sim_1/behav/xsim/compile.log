@@ -1,0 +1,4 @@
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/chuck/uni/Torino/Laboratori/Specification/lab_01/lab_01.srcs/sources_1/imports/Specification/fulladder.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'fulladder'
+INFO: [VRFC 10-163] Analyzing VHDL file "/home/chuck/uni/Torino/Laboratori/Specification/lab_01/lab_01.srcs/sources_1/imports/Specification/fulladder_tb.vhd" into library xil_defaultlib
+INFO: [VRFC 10-3107] analyzing entity 'Testbench'

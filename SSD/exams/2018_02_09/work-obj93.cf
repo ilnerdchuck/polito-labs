@@ -1,0 +1,5 @@
+v 4
+file . "ex1.vhd" "48f91d7aecfc8284d9b2227b0e19a3edd52cf2f6" "20241109143356.020":
+  entity ex1 at 1( 0) + 0 on 11;
+  architecture comb of ex1 at 12( 195) + 0 on 12;
+  architecture comb2 of ex1 at 37( 758) + 0 on 13;
