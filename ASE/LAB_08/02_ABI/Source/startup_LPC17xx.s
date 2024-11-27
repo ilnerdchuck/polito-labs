@@ -1,7 +1,7 @@
 ;            Computer Architectures - 02LSEOV 02LSEOQ            ;
 ; author: 		Paolo BERNARDI - Politecnico di Torino           ;
 ; creation: 	11 November 2018								 ;
-; last update:  1 Dicember 2020								 ;
+; last update:  1 Dicember 2020								 	 ;
 ; functionalities:												 ;
 ;		nothing but bringing to the reset handler				 ;
 
@@ -14,7 +14,7 @@
 Stack_Size      EQU     0x00000200
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
-				SPACE   Stack_Size/2 
+				SPACE   Stack_Size/2
 Stack_Mem       SPACE   Stack_Size/2
 __initial_sp		
 
@@ -37,7 +37,7 @@ __heap_limit
                 THUMB
 
 
-; Vector Table Mapped 				to Address 0 at Reset
+; Vector Table Mapped to Address 0 at Reset
 
                 AREA    RESET, DATA, READONLY
                 EXPORT  __Vectors
@@ -102,36 +102,50 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
 CRP_Key         DCD     0xFFFFFFFF
                 ENDIF
 
+
+				AREA 	matrixData, DATA, READONLY
+				EXPORT Matrix_Coordinates
+				EXPORT ROWS
+				EXPORT COLUMNS
+				
+				ALIGN 2
+				
+Matrix_Coordinates 	
+				DCD -5, 5,  -4, 5,  -3, 5,  -2, 5,  -1, 5,   0, 5,   1, 5,   2, 5,   3, 5,   4, 5,   5, 5
+				DCD -5, 4,  -4, 4,  -3, 4,  -2, 4,  -1, 4,   0, 4,   1, 4,   2, 4,   3, 4,   4, 4,   5, 4
+				DCD -5, 3,  -4, 3,  -3, 3,  -2, 3,  -1, 3,   0, 3,   1, 3,   2, 3,   3, 3,   4, 3,   5, 3
+				DCD -5, 2,  -4, 2,  -3, 2,  -2, 2,  -1, 2,   0, 2,   1, 2,   2, 2,   3, 2,   4, 2,   5, 2
+				DCD -5, 1,  -4, 1,  -3, 1,  -2, 1,  -1, 1,   0, 1,   1, 1,   2, 1,   3, 1,   4, 1,   5, 1
+				DCD -5, 0,  -4, 0,  -3, 0,  -2, 0,  -1, 0,   0, 0,   1, 0,   2, 0,   3, 0,   4, 0,   5, 0
+				DCD -5,-1,  -4,-1,  -3,-1,  -2,-1,  -1,-1,   0,-1,   1,-1,   2,-1,   3,-1,   4,-1,   5,-1
+				DCD -5,-2,  -4,-2,  -3,-2,  -2,-2,  -1,-2,   0,-2,   1,-2,   2,-2,   3,-2,   4,-2,   5,-2
+				DCD -5,-3,  -4,-3,  -3,-3,  -2,-3,  -1,-3,   0,-3,   1,-3,   2,-3,   3,-3,   4,-3,   5,-3
+				DCD -5,-4,  -4,-4,  -3,-4,  -2,-4,  -1,-4,   0,-4,   1,-4,   2,-4,   3,-4,   4,-4,   5,-4
+				DCD -5,-5,  -4,-5,  -3,-5,  -2,-5,  -1,-5,   0,-5,   1,-5,   2,-5,   3,-5,   4,-5,   5,-5
+ROWS 			DCB 11
+COLUMNS 		DCB 22
+
+
                 AREA    |.text|, CODE, READONLY
+
 ; Reset Handler
 
 Reset_Handler   PROC
                 EXPORT  Reset_Handler             [WEAK]                                            
-				
-				; your code here
-				
-				MOV R0, #3
-				MSR CONTROL, R0
-				
+                                            
 				IMPORT __main
-				LDR R0, =__main
-				BX R0 
+				MRS R1, CONTROL	
+				ORR R1, R1, #0x1
+				MSR CONTROL, R1
 				
-InfLoop         B      	InfLoop
-                ENDP
-
+				LDR 	R0, =__main
+				LDR 	R1, =Heap_Mem
+				BLX		R0
+				
+				B      	.
+				ENDP
 
 ; Dummy Exception Handlers (infinite loops which can be modified)
-				AREA    svc_code, CODE, READONLY
-call_svc     	PROC
-                EXPORT  call_svc				  [WEAK]
-                
-				SVC		0x45
-				
-				B       LR
-                ENDP
-				AREA    |.text|, CODE, READONLY
-
 
 NMI_Handler     PROC
                 EXPORT  NMI_Handler               [WEAK]
@@ -161,6 +175,7 @@ SVC_Handler     PROC
                 EXPORT  SVC_Handler               [WEAK]
 				
 				STMFD SP!, {R0-R12, LR}
+				
 				;check the less significant byte in the LR to understand which was the SP used before the SVC
 				
 				;LR->0100 only bit 2 is to check 
@@ -168,87 +183,60 @@ SVC_Handler     PROC
 				;9=  1001 -> MSP
 				;1=  0001 -> MSP
 				
-				
-				
 				TST LR, #4
 				
+				ITE EQ
 				MRSEQ R1, MSP
 				MRSNE R1, PSP
 				
+				;Read program counter from the stack
 				LDREQ R0, [R1, #20*4]
 				LDRNE R0, [R1, #6*4]
 			
 				
-				;MRS	R1, psp	
-				;LDRB R0, [R0, #-2]	
-				LDR R0, [R0,#-4]
-				BIC R0, #0xFF000000 
+				;Read SVC number
+				LDRB R0, [R0,#-2]	;0x000000D8
 				
-				LSR R0, #16
-				LDR R2, =0
-				LDR R3, =0
+				; your code here
+				; R0 stores the value in 8 bit message to be encoded
 				
+				MOV R10, #0		; store encoded message
+				MOV R11, #0		; counter
+encode_loop		CMP R11, #8
+				BEQ exit_encode_loop
 				
-				; LDR R2, =1
-				; LDR R4, =0
-				; TST R0, R2, LSL R4
-				; da errore
+				MOV R2, #1
+				LSL R2, R11
+				AND R3, R2, R0		; get i-th bit
+				LSR R3, R11			; first bit of R3 is i-th bit
 				
+				; Now i take the counter and multiply it by 3
+				RSB R4, R11, R11, LSL #2
+				ADD R5, R4, #1
+				ADD R6, R4, #2
 				
-				;0
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;1
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;2
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;3
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;4
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;5
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;6
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;7
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;ho shiftato di 24 
-				LSR R3, #8
-				;cosí ho il risultato su 32 bit
-				STMFD R1!, {R3}
+				LSL R7, R3, R4
+				LSL R8, R3, R5
+				LSL R9, R3, R6
 				
-uscita			LDMFD SP!, {R0-R12, LR}
+				ADD R7, R7, R8
+				ADD R7, R7, R9		; R7 has now the bit repeted three times in the right position
+				
+				ORR R10, R10, R7
+				
+				ADD R11, R11, #1
+				B encode_loop
+exit_encode_loop
+				NOP
+				; Return the encoded message using the stack.
+				STR R10, [R1]		; In this way I overwrite the value of R0 in the stack, but it is ok
+				;PUSH {R10}
+				; Before leaving I need to set the user mode unpriviliged
+				MRS R1, CONTROL	
+				ORR R1, R1, #0x1
+				MSR CONTROL, R1
+				LDMFD SP!, {R0-R12, LR}
+				STR R0, [R1]
 				BX LR
 				
                 ENDP
@@ -349,26 +337,29 @@ CANActivity_IRQHandler
 
 
 ; User Initial Stack & Heap
-				IF :DEF:__MICROLIB
-					
+
+                IF      :DEF:__MICROLIB
+
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
-                EXPORT  __heap_limit                
-				ELSE 
-					
-				IMPORT __use_two_region_memory
-				EXPORT __user_initial_stackheap
+                EXPORT  __heap_limit
+
+                ELSE
+
+                IMPORT  __use_two_region_memory
+                EXPORT  __user_initial_stackheap
 __user_initial_stackheap
 
-				LDR R0, = Heap_Mem
-				LDR R1, =(Stack_Mem + Heap_Size)
-				LDR R2, =(Heap_Mem + Heap_Size)
-				LDR R3, = Stack_Mem
-				
-				BX LR
-				
-				ALIGN
+                LDR     R0, =  Heap_Mem
+                LDR     R1, =(Stack_Mem + Stack_Size)
+                LDR     R2, = (Heap_Mem +  Heap_Size)
+                LDR     R3, = Stack_Mem
+                BX      LR
 
-				ENDIF
+                ALIGN
+
+                ENDIF
+
 
                 END
+

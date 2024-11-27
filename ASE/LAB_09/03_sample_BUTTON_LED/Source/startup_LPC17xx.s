@@ -1,11 +1,24 @@
-;            Computer Architectures - 02LSEOV 02LSEOQ            ;
-; author: 		Paolo BERNARDI - Politecnico di Torino           ;
-; creation: 	11 November 2018								 ;
-; last update:  1 Dicember 2020								 ;
-; functionalities:												 ;
-;		nothing but bringing to the reset handler				 ;
-
+;/*****************************************************************************
+; * @file:    startup_LPC17xx.s
+; * @purpose: CMSIS Cortex-M3 Core Device Startup File 
+; *           for the NXP LPC17xx Device Series 
+; * @version: V1.01
+; * @date:    21. December 2009
 ; *------- <<< Use Configuration Wizard in Context Menu >>> ------------------
+; *
+; * Copyright (C) 2009 ARM Limited. All rights reserved.
+; * ARM Limited (ARM) is supplying this software for use with Cortex-M3 
+; * processor based microcontrollers.  This file can be freely distributed 
+; * within development tools that are supporting such ARM based processors. 
+; *
+; * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
+; * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
+; * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
+; * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
+; * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+; *
+; *****************************************************************************/
+
 
 ; <h> Stack Configuration
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
@@ -14,18 +27,15 @@
 Stack_Size      EQU     0x00000200
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
-				SPACE   Stack_Size/2 
-Stack_Mem       SPACE   Stack_Size/2
-__initial_sp		
-
-
+Stack_Mem       SPACE   Stack_Size
+__initial_sp
 
 
 ; <h> Heap Configuration
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00000200
+Heap_Size       EQU     0x00000000
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -37,11 +47,11 @@ __heap_limit
                 THUMB
 
 
-; Vector Table Mapped 				to Address 0 at Reset
+; Vector Table Mapped to Address 0 at Reset
 
                 AREA    RESET, DATA, READONLY
                 EXPORT  __Vectors
-												; 0x10000200
+
 __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     Reset_Handler             ; Reset Handler
                 DCD     NMI_Handler               ; NMI Handler
@@ -93,8 +103,8 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     MCPWM_IRQHandler          ; 46: Motor Control PWM
                 DCD     QEI_IRQHandler            ; 47: Quadrature Encoder Interface
                 DCD     PLL1_IRQHandler           ; 48: PLL1 Lock (USB PLL)
-                DCD     USBActivity_IRQHandler    ; 49: USB Activity interrupt to wakeup
-                DCD     CANActivity_IRQHandler    ; 50: CAN Activity interrupt to wakeup
+				DCD		USBActivity_IRQHandler    ; USB Activity interrupt to wakeup
+				DCD		CANActivity_IRQHandler    ; CAN Activity interrupt to wakeup
 
 
                 IF      :LNOT::DEF:NO_CRP
@@ -102,36 +112,21 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
 CRP_Key         DCD     0xFFFFFFFF
                 ENDIF
 
+
                 AREA    |.text|, CODE, READONLY
+
+
 ; Reset Handler
 
 Reset_Handler   PROC
-                EXPORT  Reset_Handler             [WEAK]                                            
-				
-				; your code here
-				
-				MOV R0, #3
-				MSR CONTROL, R0
-				
-				IMPORT __main
-				LDR R0, =__main
-				BX R0 
-				
-InfLoop         B      	InfLoop
+                EXPORT  Reset_Handler             [WEAK]
+                IMPORT  __main
+                LDR     R0, =__main
+                BX      R0
                 ENDP
 
 
-; Dummy Exception Handlers (infinite loops which can be modified)
-				AREA    svc_code, CODE, READONLY
-call_svc     	PROC
-                EXPORT  call_svc				  [WEAK]
-                
-				SVC		0x45
-				
-				B       LR
-                ENDP
-				AREA    |.text|, CODE, READONLY
-
+; Dummy Exception Handlers (infinite loops which can be modified)                
 
 NMI_Handler     PROC
                 EXPORT  NMI_Handler               [WEAK]
@@ -159,98 +154,7 @@ UsageFault_Handler\
                 ENDP
 SVC_Handler     PROC
                 EXPORT  SVC_Handler               [WEAK]
-				
-				STMFD SP!, {R0-R12, LR}
-				;check the less significant byte in the LR to understand which was the SP used before the SVC
-				
-				;LR->0100 only bit 2 is to check 
-				;D=  1101 -> PSP
-				;9=  1001 -> MSP
-				;1=  0001 -> MSP
-				
-				
-				
-				TST LR, #4
-				
-				MRSEQ R1, MSP
-				MRSNE R1, PSP
-				
-				LDREQ R0, [R1, #20*4]
-				LDRNE R0, [R1, #6*4]
-			
-				
-				;MRS	R1, psp	
-				;LDRB R0, [R0, #-2]	
-				LDR R0, [R0,#-4]
-				BIC R0, #0xFF000000 
-				
-				LSR R0, #16
-				LDR R2, =0
-				LDR R3, =0
-				
-				
-				; LDR R2, =1
-				; LDR R4, =0
-				; TST R0, R2, LSL R4
-				; da errore
-				
-				
-				;0
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;1
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;2
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;3
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;4
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;5
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;6
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;7
-				LSRS R0, #1
-				LDRCS R2, =0xE0000000
-				LDRCC R2, =0x00000000
-				LSR R3, #3
-				ORR R3, R2
-				;ho shiftato di 24 
-				LSR R3, #8
-				;cosí ho il risultato su 32 bit
-				STMFD R1!, {R3}
-				
-uscita			LDMFD SP!, {R0-R12, LR}
-				BX LR
-				
+                B       .
                 ENDP
 DebugMon_Handler\
                 PROC
@@ -301,42 +205,42 @@ Default_Handler PROC
                 EXPORT  MCPWM_IRQHandler          [WEAK]
                 EXPORT  QEI_IRQHandler            [WEAK]
                 EXPORT  PLL1_IRQHandler           [WEAK]
-                EXPORT  USBActivity_IRQHandler    [WEAK]
-                EXPORT  CANActivity_IRQHandler    [WEAK]
+				EXPORT  USBActivity_IRQHandler    [WEAK]
+				EXPORT  CANActivity_IRQHandler    [WEAK]
 
-WDT_IRQHandler
-TIMER0_IRQHandler
-TIMER1_IRQHandler
-TIMER2_IRQHandler
-TIMER3_IRQHandler
-UART0_IRQHandler
-UART1_IRQHandler
-UART2_IRQHandler
-UART3_IRQHandler
-PWM1_IRQHandler
-I2C0_IRQHandler
-I2C1_IRQHandler
-I2C2_IRQHandler
-SPI_IRQHandler
-SSP0_IRQHandler
-SSP1_IRQHandler
-PLL0_IRQHandler
-RTC_IRQHandler
-EINT0_IRQHandler
-EINT1_IRQHandler
-EINT2_IRQHandler
-EINT3_IRQHandler
-ADC_IRQHandler
-BOD_IRQHandler
-USB_IRQHandler
-CAN_IRQHandler
-DMA_IRQHandler
-I2S_IRQHandler
-ENET_IRQHandler
-RIT_IRQHandler
-MCPWM_IRQHandler
-QEI_IRQHandler
-PLL1_IRQHandler
+WDT_IRQHandler           
+TIMER0_IRQHandler         
+TIMER1_IRQHandler         
+TIMER2_IRQHandler         
+TIMER3_IRQHandler         
+UART0_IRQHandler          
+UART1_IRQHandler          
+UART2_IRQHandler          
+UART3_IRQHandler          
+PWM1_IRQHandler           
+I2C0_IRQHandler           
+I2C1_IRQHandler           
+I2C2_IRQHandler           
+SPI_IRQHandler            
+SSP0_IRQHandler           
+SSP1_IRQHandler           
+PLL0_IRQHandler           
+RTC_IRQHandler            
+EINT0_IRQHandler          
+EINT1_IRQHandler          
+EINT2_IRQHandler          
+EINT3_IRQHandler          
+ADC_IRQHandler            
+BOD_IRQHandler            
+USB_IRQHandler            
+CAN_IRQHandler            
+DMA_IRQHandler          
+I2S_IRQHandler            
+ENET_IRQHandler       
+RIT_IRQHandler          
+MCPWM_IRQHandler             
+QEI_IRQHandler            
+PLL1_IRQHandler           
 USBActivity_IRQHandler
 CANActivity_IRQHandler
 
@@ -349,26 +253,28 @@ CANActivity_IRQHandler
 
 
 ; User Initial Stack & Heap
-				IF :DEF:__MICROLIB
-					
+
+                IF      :DEF:__MICROLIB
+                
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
-                EXPORT  __heap_limit                
-				ELSE 
-					
-				IMPORT __use_two_region_memory
-				EXPORT __user_initial_stackheap
+                EXPORT  __heap_limit
+                
+                ELSE
+                
+                IMPORT  __use_two_region_memory
+                EXPORT  __user_initial_stackheap
 __user_initial_stackheap
 
-				LDR R0, = Heap_Mem
-				LDR R1, =(Stack_Mem + Heap_Size)
-				LDR R2, =(Heap_Mem + Heap_Size)
-				LDR R3, = Stack_Mem
-				
-				BX LR
-				
-				ALIGN
+                LDR     R0, =  Heap_Mem
+                LDR     R1, =(Stack_Mem + Stack_Size)
+                LDR     R2, = (Heap_Mem +  Heap_Size)
+                LDR     R3, = Stack_Mem
+                BX      LR
 
-				ENDIF
+                ALIGN
+
+                ENDIF
+
 
                 END
