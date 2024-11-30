@@ -399,6 +399,11 @@
               <FileType>1</FileType>
               <FilePath>.\Source\sample.c</FilePath>
             </File>
+            <File>
+              <FileName>myState.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\myState.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -877,6 +882,11 @@
               <FileType>1</FileType>
               <FilePath>.\Source\sample.c</FilePath>
             </File>
+            <File>
+              <FileName>myState.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\myState.s</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -973,7 +983,7 @@
           <targetInfo name="LandTiger_LPC1768 (release)" versionMatchMode="fixed"/>
         </targetInfos>
       </package>
-      <package name="LPC1700_DFP" vendor="Keil" version="2.7.1">
+      <package name="LPC1700_DFP" vendor="Keil" version="2.7.2">
         <targetInfos>
           <targetInfo name="LandTiger_LPC1768 (release)" versionMatchMode="fixed"/>
         </targetInfos>

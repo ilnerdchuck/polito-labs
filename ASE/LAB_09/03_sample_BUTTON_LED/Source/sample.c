@@ -19,7 +19,9 @@
 #include "button_EXINT/button.h"
 
 /* Led external variables from funct_led */
-extern unsigned char led_value;					/* defined in funct_led								*/
+unsigned char curr_state;					/* defined in funct_led								*/
+unsigned char taps;
+
 #ifdef SIMULATOR
 extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emulator to find the symbol (can be placed also inside system_LPC17xx.h but since it is RO, it needs more work)
 #endif
@@ -32,6 +34,9 @@ int main (void) {
   SystemInit();  												/* System Initialization (i.e., PLL)  */
   LED_init();                           /* LED Initialization                 */
   BUTTON_init();												/* BUTTON Initialization              */
+	
+	curr_state = 0x00;
+	taps = 0x1D;
 	
   while (1) {                           /* Loop forever                       */	
   }

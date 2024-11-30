@@ -1,0 +1,17 @@
+Feasibility studdy:
+===================
+is a dynamic priority scheduling with preemption. The priority is computed by the time of the deadline of a process and the current time of execution of the scheduler: the lower the number the higher the priority of the task.
+Feasability is done by calcualting the CPU utilization by the processes:
+
+$\sum{i=1}{4}\fract{C_i}{T_i} <= 1$
+
+in this case is 0.58<=1 so it is feasible, this indicates also that there will be idle time in the chart since the utilization factor is less than 1.
+
+Time diagram
+=============
+
+As we can see we have idle times as checked with the formula
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 16 | 
+-------------------------------------------------------------------------------------------------------------------------
+| P2|   P1  | P4|   P3  | P2|  P3   |   idle      | P2 |   P1    | P4 |   idle  | P2 |   P1    |       idle        |    |  
+-------------------------------------------------------------------------------------------------------------------------

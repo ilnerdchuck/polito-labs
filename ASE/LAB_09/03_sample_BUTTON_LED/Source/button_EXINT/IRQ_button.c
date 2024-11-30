@@ -3,6 +3,13 @@
 
 #include "../led/led.h"
 
+
+extern unsigned char next_state(unsigned char ,unsigned char ,int*);
+
+extern unsigned char taps;
+extern unsigned char curr_state;
+int output;
+
 void EINT0_IRQHandler (void)	  
 {
 	LED_On(0);
@@ -12,8 +19,16 @@ void EINT0_IRQHandler (void)
 
 void EINT1_IRQHandler (void)	  
 {
-  LED_On(1);
-	LPC_SC->EXTINT &= (1 << 1);     /* clear pending interrupt         */
+		int count =0;
+		unsigned char nt_state = next_state(curr_state,taps,&output);
+		// check if current state is equal to the old state we cycled 
+		// until the new state
+		while(nt_state != curr_state){
+				nt_state = next_state(curr_state,taps,&output);
+				count++;
+		}
+		LED_Out(count);
+		//LPC_GPIO2->FIOSET = curr_state;
 }
 
 void EINT2_IRQHandler (void)	  
