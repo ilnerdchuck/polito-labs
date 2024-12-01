@@ -1,4 +1,5 @@
 #include "u_task.h"
+#include "uart.h"
 #include <stdint.h>
 
 void InventoryPicker(void *pvParameters);
@@ -6,13 +7,21 @@ void PackingStation(void *pvParameters);
 void ShippingController(void *pvParameters);
 void LoggerSystem(void *pvParameters);
 
+QueueHandle_t inv_to_pack; 
+QueueHandle_t pack_to_ship;
 
+void InventoryInitializer(void *pvParameters){
+  UART_printf("InventoryInitializer\n");
+  (void) pvParameters;
+
+  inv_to_pack = xQueueCreate(10, sizeof(item)); 
+  pack_to_ship= xQueueCreate(10, sizeof(item));
+
+  vTaskDelete(NULL);
+}
 
 void InventoryPicker(void *pvParameters) { 
   UART_printf("InventoryPicker\n");   
-  QueueHandle_t inv_to_pack = xQueueCreate(10, sizeof(item)); 
-  QueueHandle_t pack_to_ship= xQueueCreate(10, sizeof(item));
-
 	(void) pvParameters;
   uint8_t order_ID = 0;
     for (;;) {

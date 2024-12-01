@@ -7,12 +7,22 @@ int main(int argc, char **argv){
 	(void) argv;
 
   UART_init();
+	
 	BaseType_t _err = xTaskCreate(
+		InventoryInitializer,
+		"invInit",
+		configMINIMAL_STACK_SIZE,
+		NULL,
+		mainTASK_PRIORITY,
+		NULL
+	);
+
+  _err = xTaskCreate(
 		InventoryPicker,
 		"InventoryPicker",
 		configMINIMAL_STACK_SIZE,
 		NULL,
-		mainTASK_PRIORITY,
+		workerTASK_PRIORITY,
 		NULL
 	);
 
@@ -22,7 +32,7 @@ int main(int argc, char **argv){
 		"PackingStation",
 		configMINIMAL_STACK_SIZE,
 		NULL,
-		mainTASK_PRIORITY,
+		workerTASK_PRIORITY,
 		NULL
 	);
 	_err = xTaskCreate(
@@ -30,9 +40,10 @@ int main(int argc, char **argv){
 		"ShippingController",
 		configMINIMAL_STACK_SIZE,
 		NULL,
-		mainTASK_PRIORITY,
+		workerTASK_PRIORITY,
 		NULL
 	);
+
 	// BaseType_t xTaskReturn = xTaskCreate(
 	// 	LoggerSystem,
 	// 	"LoggerSystem",

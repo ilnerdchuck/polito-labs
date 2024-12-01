@@ -35,8 +35,8 @@ int main (void) {
   LED_init();                           /* LED Initialization                 */
   BUTTON_init();												/* BUTTON Initialization              */
 	
-	curr_state = 0x00;
-	taps = 0x1D;
+	curr_state = 0xAA;
+	taps = 0x6D;
 	
   while (1) {                           /* Loop forever                       */	
   }

@@ -14,32 +14,41 @@ next_state	PROC
 			;1
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;2
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;3
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;4
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;5
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;6
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;7
 			LSRS R4, #1
 			EORCS R2,R2, #1
+			
 			;8
 			LSRS R4, #1
 			EORCS R2,R2, #1
 			
 			LSR R0, #1
-			LSL R2, #8
+			LSL R2, #7
 			
-			ORR R0, R2, R2
+			ORR R0, R0, R2
 			
 			POP {R4-R12,LR}
+			BX LR
 			ENDP
+			END

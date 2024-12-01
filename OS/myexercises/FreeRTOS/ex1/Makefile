@@ -1,5 +1,5 @@
 # The directory that contains FreeRTOS source code
-FREERTOS_ROOT := /home/chuck/repos/FreeRTOS/FreeRTOS
+FREERTOS_ROOT := $${HOME}/repos/FreeRTOS/FreeRTOS
 
 # Demo code
 DEMO_PROJECT := .
