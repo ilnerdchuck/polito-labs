@@ -35,7 +35,7 @@ void enable_timer( uint8_t timer_num )
   }
 	else if (timer_num == 3 )
   {
-	LPC_TIM3>TCR = 1;
+	LPC_TIM3->TCR = 1;
   }
   return;
 }
@@ -166,8 +166,16 @@ uint32_t init_timer ( uint8_t timer_num, uint32_t TimerInterval )
   }
 	else if ( timer_num == 2 )
   {
+	//-------25%---------
 	LPC_TIM2->MR0 = TimerInterval/4;
-	LPC_TIM2->MR1 = TimerInterval;
+	//-------50%---------
+	//LPC_TIM2->MR0 = TimerInterval/2;
+	//-------75%---------
+	//LPC_TIM2->MR0 = TimerInterval*3/4;
+	//-------100%---------
+	//LPC_TIM2->MR0 = TimerInterval;
+	
+	LPC_TIM2->MR1 = TimerInterval;	
 	LPC_TIM2->MCR = 25;				
 
 	NVIC_EnableIRQ(TIMER2_IRQn);
@@ -176,7 +184,14 @@ uint32_t init_timer ( uint8_t timer_num, uint32_t TimerInterval )
   }
 	else if ( timer_num == 3 )
   {
-	LPC_TIM3->MR0 = TimerInterval/4;
+	//-------25%---------
+	LPC_TIM2->MR0 = TimerInterval/4;
+	//-------50%---------
+	//LPC_TIM2->MR0 = TimerInterval/2;
+	//-------75%---------
+	//LPC_TIM2->MR0 = TimerInterval*3/4;
+	//-------100%---------
+	//LPC_TIM2->MR0 = TimerInterval;
 	LPC_TIM3->MR1 = TimerInterval;
 	LPC_TIM3->MCR = 25;				
 

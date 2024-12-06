@@ -31,21 +31,12 @@ int main (void) {
   	
 	SystemInit();  												/* System Initialization (i.e., PLL)  */
   LED_init();                           /* LED Initialization                 */
-  BUTTON_init();												/* BUTTON Initialization              */
-	init_timer(2,0x000403F4);							/* TIMER0 Initialization              */
-																				/* K = T*Fr = [s]*[Hz] = [s]*[1/s]	  */
-																				/* Ton = 5,2631*10^-1 = 1/2*90 Hz			*/
-																				/* K = Ton * F = 5,2631*10^-3 * 25*10^6*/
-	init_timer(3,0x000403F4);							/* TIMER0 Initialization              */
-																				/* K = T*Fr = [s]*[Hz] = [s]*[1/s]	  */
-																				/* Ton = 5,2631*10^-1 = 1/2*90 Hz			*/
-																				/* K = Ton * F = 5,2631*10^-3 * 25*10^6*/	
-//	init_timer(0,0x000061A8);
-	
-//	init_timer(0,0xFFFFFFFF);							// 5min 43sec
-	//init_timer(0,0x00B41780);							// 1min 0x2CB41780
-//	init_timer(0,0x0EE6B280);								// 10 sec
-	LED_On(0);
+  BUTTON_init();					
+																				/* BUTTON Initialization              */
+	init_timer(2,0x00F43D11);							/* TIMER2 Initialization              */
+																				/* 90Hz timer*/
+	init_timer(3,0x00FF4240);							/* TIMER3 Initialization              */
+																				/* 25Hz timer*/	
 	
 	enable_timer(2);
 	enable_timer(3);

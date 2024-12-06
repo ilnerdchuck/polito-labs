@@ -90,10 +90,10 @@ void TIMER2_IRQHandler (void)
 ******************************************************************************/
 void TIMER3_IRQHandler (void)
 {
-	if(LPC_TIM2->IR == 1){
-		LED_Off(1);
-	}else if (LPC_TIM2->IR == 2){
-		LED_On(1);
+	if(LPC_TIM3->IR == 1){
+		LED_Off(2);
+	}else if (LPC_TIM3->IR == 2){
+		LED_On(2);
 	}	
   LPC_TIM2->IR = 1;			/* clear interrupt flag */
   return;

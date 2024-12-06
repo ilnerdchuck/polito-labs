@@ -99,6 +99,7 @@ SOURCE_FILES += $(KERNEL_DIR)/portable/GCC/ARM_CM3/port.c
 SOURCE_FILES += $(DEMO_PROJECT)/main.c
 SOURCE_FILES += $(DEMO_PROJECT)/uart.c
 SOURCE_FILES += $(DEMO_PROJECT)/u_task.c
+SOURCE_FILES += $(DEMO_PROJECT)/doggy.c
 
 # Start-up code
 SOURCE_FILES += ./startup.c

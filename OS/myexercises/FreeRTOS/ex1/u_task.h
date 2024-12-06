@@ -10,6 +10,7 @@
 #include "task.h"
 #include "portmacro.h"
 #include "projdefs.h"
+#include <doggy.h>
 
 #define mainTASK_PRIORITY (tskIDLE_PRIORITY + 3)
 #define workerTASK_PRIORITY (tskIDLE_PRIORITY + 2)

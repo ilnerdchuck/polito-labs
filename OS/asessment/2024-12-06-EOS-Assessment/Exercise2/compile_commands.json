@@ -1,0 +1,28 @@
+[
+  {
+    "arguments": [
+      "/usr/lib64/ccache/arm-none-eabi-gcc",
+      "-ffreestanding",
+      "-mthumb",
+      "-mcpu=cortex-m3",
+      "-Wall",
+      "-Wextra",
+      "-Wshadow",
+      "-g3",
+      "-Os",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-I./../FreeRTOS/FreeRTOS/Source/include",
+      "-I./../FreeRTOS/FreeRTOS/Source/portable/GCC/ARM_CM3",
+      "-I.",
+      "-I./CMSIS",
+      "-c",
+      "-o",
+      "output/heap_4.o",
+      "./../FreeRTOS/FreeRTOS/Source/portable/MemMang/heap_4.c"
+    ],
+    "directory": "/home/chuck/uni/Torino/Laboratori/OS/asessment/2024-12-06-EOS-Assessment/Exercise2",
+    "file": "/home/chuck/uni/Torino/Laboratori/OS/asessment/2024-12-06-EOS-Assessment/FreeRTOS/FreeRTOS/Source/portable/MemMang/heap_4.c",
+    "output": "/home/chuck/uni/Torino/Laboratori/OS/asessment/2024-12-06-EOS-Assessment/Exercise2/output/heap_4.o"
+  }
+]

@@ -1,0 +1,42 @@
+
+
+Question 1
+==========
+Can you explain the main difference between a spinlock and a semaphore?
+The spinlock keeps a process (task) in the running state while waiting for a critical section (or variable) to be free, for example performing a while loop to check the  variable, it is better than a semaphore for short critical sections. A semaphore allows a process (task) to go in a blocked state while waiting for the access on a critical section by checking with atomicity a variable that  tells if a process can enter the critical section (it depends on the implementation ex. a counter>=0 allows to enter the critical section while a counter<0 keeps the process in a blocked state). Another difference is that the spinlock is not fiaseable in a single core architecture because the process in execution occupies the only core and no other process can continue the execution thus freeing the access of a critical section. And the spinlock avoids contex switching while the semaphore may perform many more, depending on the waiting processes.   
+
+Question 2
+==========
+<Place an [X] for the correct answer>
+
+Which of the following statements is TRUE about memory-mapped I/O?
+
+[ ] The CPU requires special instructions to communicate with memory-mapped devices.
+[x] Memory-mapped I/O allows devices and regular memory to share the same address space.
+[ ] Memory-mapped I/O eliminates the need for an address bus.
+[ ] The primary advantage of memory-mapped I/O is that it provides higher transfer speeds than DMA.
+
+
+Question 3
+==========
+Consider a filesystem based on i-nodes. Every data block on disk can store 512b. 
+The i-node structure has two levels of hierarchy. 
+The first-level inode contains ten 32-bit pointers to data blocks and ten 32-bit pointers to second-level i-nodes. 
+Each second-level i-node contains 10 32-bit pointers to data blocks.
+
+The system must store a 12 KB file on disk. Compute:
+* The number of data blocks required on disk
+* The number of first-level and second-level i-nodes required to index the data blocks
+* The total occupation of the i-nodes in bytes
+
+- 12b*1024 i have the b required to store the data
+- 12*1024/512 i have the needed blocks = 24 blocks
+- i need 1 first-level inode and 2 second level inode 
+  1l_inode-> 10 data blocks
+      |_2l_inode-> 10 data blocks
+      |_2l_inode-> 4 data blocks 6 null pointers
+      |_-> 8 null inode pointers
+
+- first level inode size = 10*4b(pointers to data) + 10*4b(pointers to next inode) = 80b
+- second level inode size = 10*4b(pointers to data) = 40b
+- total inodesize 80b+40b+40b = 160b
