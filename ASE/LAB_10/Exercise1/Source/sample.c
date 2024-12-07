@@ -31,13 +31,10 @@ int main (void) {
   	
 	SystemInit();  												/* System Initialization (i.e., PLL)  */
   LED_init();                           /* LED Initialization                 */
-  BUTTON_init();					
-																				/* BUTTON Initialization              */
-	init_timer(2,0x00F43D11);							/* TIMER2 Initialization              */
-																				/* 90Hz timer*/
-	init_timer(3,0x00FF4240);							/* TIMER3 Initialization              */
-																				/* 25Hz timer*/	
-	
+  BUTTON_init();												/* BUTTON Initialization              */
+	init_timer(2,0x00043D12);							/* TIMER1 90Hz   1/90*25MHz           */
+	init_timer(3, 0x000F4240);						/* TIMER1 25Hz   1/25*25MHz           */
+		
 	enable_timer(2);
 	enable_timer(3);
 	

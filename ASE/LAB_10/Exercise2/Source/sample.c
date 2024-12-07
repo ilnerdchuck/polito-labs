@@ -32,26 +32,18 @@ int main (void) {
 	SystemInit();  												/* System Initialization (i.e., PLL)  */
   LED_init();                           /* LED Initialization                 */
   BUTTON_init();												/* BUTTON Initialization              */
-	
-	LPC_SC -> PCONP |= (1 << 22);  // TURN ON TIMER 2
-	LPC_SC -> PCONP |= (1 << 23);  // TURN ON TIMER 3	
+	//------Timers Init------
+	init_RIT(0x004C4B40);									/* RIT Initialization 50 msec         */
+	init_timer(0,0x0);										/* TIMER0        1/9000*25MHz         */
+	init_timer(1,0x108E8E50);							/* TIMER1 9000Hz 1/9000*25MHz         */
+	init_timer(2,0x00043D12);							/* TIMER2 90Hz   1/90*25MHz           */
+	init_timer(3,0x000F4240);							/* TIMER3 25Hz   1/25*25MHz           */
 
-
-//	init_timer(2, 0, 2, 1, 0x017D7840);							/* TIMER0 Initialization              */
-																				/* K = T*Fr = [s]*[Hz] = [s]*[1/s]	  */
-																				/* T = K / Fr = 0x017D7840 / 25MHz    */
-																				/* T = K / Fr = 25000000 / 25MHz      */
-																				/* T = 1s	(one second)   							*/							
-	//enable_timer(2);
-	
-	init_timer(1, 0, 0, 1, 0x3D090); //MR0
-	init_timer(1, 0, 1, 3, 0xF4240); //MR1
-	
-	enable_timer(1);
-	
-	init_timer(2, 0, 0, 7, 0x47868C0);
+	//------Timers Enable------
+	enable_timer(0);
+	enable_timer(1);	
 	enable_timer(2);
-
+	enable_timer(3);
 	
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
 	LPC_SC->PCON &= 0xFFFFFFFFD;						
@@ -61,7 +53,3 @@ int main (void) {
   }
 
 }
-
-
-//	LPC_SC->PCONP |= (1 << 22); // Enable Timer 2
-//  LPC_SC->PCONP |= (1 << 23); // Enable Timer 3
