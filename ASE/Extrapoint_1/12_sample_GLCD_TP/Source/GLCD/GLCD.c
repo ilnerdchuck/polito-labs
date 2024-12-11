@@ -714,6 +714,54 @@ void DrawPoint( uint16_t Xpos, uint16_t Ypos,uint8_t pointType, uint16_t pointCo
 		}
 	}
 }
+/******************************************************************************
+* Function Name  : DrawWall
+* Description    : Draws angled or straight wall
+* Input          : - Xpos:  
+*                  - Ypos: 
+*				   - ASCI: 
+*				   - charColor: ×Ö·ûÑÕÉ«   
+*				   - bkColor: ±³¾°ÑÕÉ« 
+* Output         : None
+* Return         : None
+* Attention		 : None
+*******************************************************************************/
+
+uint8_t straightWall[8][8] = {0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0,
+															0,0,0,1,1,0,0,0};
+
+uint8_t angledWall[8][8] = {0,0,0,1,1,0,0,0,
+														0,0,0,1,1,0,0,0,
+														0,0,0,1,1,1,0,0,
+														0,0,0,1,1,1,1,1,
+														0,0,0,0,1,1,1,1,
+														0,0,0,0,0,0,0,0,
+														0,0,0,0,0,0,0,0,
+														0,0,0,0,0,0,0,0};
+
+
+void DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor, uint16_t bkColor){
+	uint16_t i, j;
+	// take the correct matrix template to draw the point
+	uint8_t (*wallTemplate)[8] = wallType==0? straightWall : angledWall;
+	for( i=0; i<8; ++i){
+		for( j=0; j<8; ++j){
+			if(wallTemplate[i][j] == 1){
+					LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
+			}
+			else{
+					LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+			}
+		}
+	}
+}
+
 
 /*********************************************************************************************************
       END FILE

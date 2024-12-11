@@ -25,6 +25,7 @@
 #include "GLCD/GLCD.h" 
 #include "TouchPanel/TouchPanel.h"
 #include "timer/timer.h"
+//#include "pacman_lib.h"
 
 
 #ifdef SIMULATOR
@@ -42,7 +43,7 @@ int main(void)
 	//TouchPanel_Calibrate();
 	
 	LCD_Clear(Black);
-		//Game time text
+	//Game time text
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
 	GUI_Text(30, 16, (uint8_t *) "100s", White, Black);
 	//Score Text
@@ -55,9 +56,11 @@ int main(void)
 	GUI_Text(180, 82, (uint8_t *) "0", Yellow, Yellow);
 	
 	DrawPoint( 200, 200, 0, White, Black);
-	DrawPoint( 200, 220, 1, White, Black);
+	DrawPoint( 200, 208, 1, White, Black);
 	
-	//LCD_DrawLine(200, 200, 220, 220, White);
+	DrawWall( 100, 200, 0, Blue, Black);
+	DrawWall( 100, 208, 1, Blue, Black);
+	
 	//init_timer(0, 0x1312D0 ); 						/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0 */
 	//init_timer(0, 0x6108 ); 						  /* 1ms * 25MHz = 25*10^3 = 0x6108 */
 	//init_timer(0, 0x4E2 ); 						    /* 500us * 25MHz = 1.25*10^3 = 0x4E2 */
