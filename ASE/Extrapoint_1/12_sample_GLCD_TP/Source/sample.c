@@ -38,19 +38,26 @@ int main(void)
 	
   LCD_Initialization();
 	
-	//Touch Things
   //TP_Init();
 	//TouchPanel_Calibrate();
 	
 	LCD_Clear(Black);
-	//Game time text
+		//Game time text
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
-	GUI_Text(30, 12, (uint8_t *) " 100s", White, Black);
+	GUI_Text(30, 16, (uint8_t *) "100s", White, Black);
 	//Score Text
-	GUI_Text(180, 0, (uint8_t *) "SCORE", White, Black);
-	GUI_Text(180, 12, (uint8_t *) " 000", White, Black);
+	GUI_Text(180, 0, (uint8_t *) "SCORE", White, Blue);
+	GUI_Text(180, 16, (uint8_t *) "000", Red, Red);
+	///
+	GUI_Text(180, 32, (uint8_t *) "0", Red, Red);
+	GUI_Text(180, 48, (uint8_t *) "0", Blue, Blue);
+	GUI_Text(180, 64, (uint8_t *) "0", Green, Green);
+	GUI_Text(180, 82, (uint8_t *) "0", Yellow, Yellow);
 	
-	//LCD_DrawLine(0, 0, 200, 200, White);
+	DrawPoint( 200, 200, 0, White, Black);
+	DrawPoint( 200, 220, 1, White, Black);
+	
+	//LCD_DrawLine(200, 200, 220, 220, White);
 	//init_timer(0, 0x1312D0 ); 						/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0 */
 	//init_timer(0, 0x6108 ); 						  /* 1ms * 25MHz = 25*10^3 = 0x6108 */
 	//init_timer(0, 0x4E2 ); 						    /* 500us * 25MHz = 1.25*10^3 = 0x4E2 */
