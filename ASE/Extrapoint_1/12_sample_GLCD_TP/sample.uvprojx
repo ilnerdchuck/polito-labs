@@ -396,9 +396,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>sample.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\sample.c</FilePath>
+              <FilePath>.\Source\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -611,6 +611,21 @@
               <FileName>mpu_armv7.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Source\CMSIS_core\mpu_armv7.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Pacman_Lib</GroupName>
+          <Files>
+            <File>
+              <FileName>pacman_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\pacman\pacman_lib.c</FilePath>
+            </File>
+            <File>
+              <FileName>pacman_lib.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Source\pacman\pacman_lib.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1009,9 +1024,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>sample.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Source\sample.c</FilePath>
+              <FilePath>.\Source\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1173,6 +1188,21 @@
               <FileName>mpu_armv7.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Source\CMSIS_core\mpu_armv7.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Pacman_Lib</GroupName>
+          <Files>
+            <File>
+              <FileName>pacman_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Source\pacman\pacman_lib.c</FilePath>
+            </File>
+            <File>
+              <FileName>pacman_lib.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Source\pacman\pacman_lib.h</FilePath>
             </File>
           </Files>
         </Group>
