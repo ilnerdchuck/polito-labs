@@ -69,7 +69,7 @@ cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  9,10,10,10, 0, 2,10,10, 2, 0, 2,10,10,10,10,10,10,10, 2, 0, 0, 0, 0, 2, 2, 0,10,10,10, 9,
  3, 3, 3, 5, 0, 2,10,10, 2, 0, 2,10,10,10,10,10,10,10, 2, 0, 4, 5, 0, 6, 7, 0, 4, 3, 3, 3,
  4, 3, 3, 7, 0, 2, 4, 3, 7, 0, 6, 3, 3, 3, 3, 3, 3, 3, 7, 0, 6, 7, 0, 0, 0, 0, 6, 3, 3, 5,
- 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 2,
+ 2, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 8, 1, 0, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 2,
  2, 0, 4, 5, 0, 6, 7, 0, 4, 3, 3, 5, 0, 4, 5, 0, 4, 5, 0, 4, 5, 0, 4, 7, 6, 3, 3, 5, 0, 2,
  2, 0, 2, 2, 0, 0, 0, 0, 2,10,10, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 2,10,10,10,10, 2, 1, 2,
  2, 0, 2, 2, 0, 4, 3, 3, 7,10,10, 2, 0, 2, 2, 0, 2, 2, 0, 2, 2, 0, 6, 3, 3, 5,10, 2, 0, 2,
@@ -97,26 +97,7 @@ int main(void)
 	//TouchPanel_Calibrate();
 
 	LCD_Clear(Black);
-	//Game time text
-	GUI_Text( 20, 0, (uint8_t *) "GAME TIME", White, Black);
-	GUI_Text(30, 16, (uint8_t *) "100s", White, Black);
-	//Score Text
-	GUI_Text(180, 0, (uint8_t *) "SCORE", White, Black);
-	GUI_Text(180, 16, (uint8_t *) "000", White, Black);
-	/* Test things
-	GUI_Text(180, 3 2, (uint8_t *) "0", Red, Red);
-	GUI_Text(180, 48, (uint8_t *) "0", Blue, Blue);
-	GUI_Text(180, 64, (uint8_t *) "0", Green, Green);
-	GUI_Text(180, 82, (uint8_t *) "0", Yellow, Yellow);
-	
-	DrawPoint( 200, 200, smallDot, White, Black);
-	DrawPoint( 200, 208, largeDot, White, Black);
-	
-	DrawWall( 100, 200, 3, Blue, Black);
-	DrawWall( 100, 208, blAngle, Blue, Black);
-	DrawWall( 108, 208, brAngle, Blue, Black);
-	DrawWall( 108, 200, 3, Blue, Black);
-	*/
+
 	int _err = initGame();
 	
 	//init_timer(0, 0x1312D0 ); 						/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0 */

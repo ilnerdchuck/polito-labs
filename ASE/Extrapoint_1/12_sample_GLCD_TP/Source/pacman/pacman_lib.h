@@ -22,11 +22,21 @@ typedef enum : uint8_t {
 	blank 		//Empty cell
 } cellType;
 
+//type to handle pacman direction
+typedef enum : uint8_t {
+	pmUp, 		//PAC-MAN facing Up
+	pmDown, 	//PAC-MAN facing Down
+	pmLeft,  	//PAC-MAN facing Left
+	pmRight,	//PAC-MAN facing Right
+} pmDir;
+
 //Everyone can check the Game State with the matrix
 extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
 
 //Draw functions
 int initGame();
 void DrawBlank( uint16_t, uint16_t, uint16_t);
+void DrawPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t);
+void DrawFilledPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t)
 int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
