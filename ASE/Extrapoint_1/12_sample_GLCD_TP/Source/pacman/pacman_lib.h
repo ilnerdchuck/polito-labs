@@ -6,6 +6,11 @@
 //and behaviour are within this drawing constraints.
 #define GAME_ROWS 34
 #define GAME_COLUMNS 30
+#define SCORE_XOFFSET 180
+#define SCORE_YOFFSET 16
+#define TIME_XOFFSET 42
+#define TIME_YOFFSET 16
+
 #define TEXT_OFFSET 32
 #define CELL_DIM 8
 
@@ -43,9 +48,10 @@ typedef struct{
 extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
 extern uint16_t gamePoints;
 extern pmState pacmanState;
-
+extern uint16_t gameTime;
 //Draw functions
 int initGame();
+void DrawTime(uint16_t time);
 void DrawBlank( uint16_t, uint16_t, uint16_t);
 void DrawPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t);
 void DrawFilledPacman( uint16_t, uint16_t, uint16_t, uint16_t);
@@ -54,5 +60,6 @@ int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 
 //Movement functions
 void updatePacmanPos(pmDir);
+int CheckNextPos(pmDir);
 
 

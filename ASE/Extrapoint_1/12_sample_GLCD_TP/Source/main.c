@@ -34,7 +34,6 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 
 //So i know i made a type but to fill out the matrix it's easier with numbers
 /*
-typedef enum : uint8_t {
 	smallDot, //0
 	largeDot, //1
 	vWall, 		//2
@@ -46,10 +45,11 @@ typedef enum : uint8_t {
 	pacman, 	//8
 	teleport, //9
 	blank 		//10
-} cellType;
 */
 uint16_t gamePoints = 0;
 pmState pacmanState;
+uint16_t gameTime = 70;
+//TODO: Add big pills at random
 cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,10, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,
  2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,10, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
@@ -91,22 +91,22 @@ cellType GameState[GAME_ROWS][GAME_COLUMNS]={
 int main(void)
 {
   SystemInit();  												/* System Initialization (i.e., PLL)  */
-	
   LCD_Initialization();
 	
   //TP_Init();
 	//TouchPanel_Calibrate();
 
 	LCD_Clear(Black);
-
+	
+	init_timer(0,0x001312D0); 							/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0*/
+	init_timer(1,0x00065B9A); 						    /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	*/
+	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				*/
+	
 	int _err = initGame();
 	
-	//init_timer(0, 0x1312D0 ); 						/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0 */
-	//init_timer(0, 0x6108 ); 						  /* 1ms * 25MHz = 25*10^3 = 0x6108 */
-	//init_timer(0, 0x4E2 ); 						    /* 500us * 25MHz = 1.25*10^3 = 0x4E2 */
-	init_timer(0, 0xC8 ); 						    /* 8us * 25MHz = 200 ~= 0xC8 */
-	
 	enable_timer(0);
+	enable_timer(1);
+	enable_timer(2);
 	
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
 	LPC_SC->PCON &= ~(0x2);						

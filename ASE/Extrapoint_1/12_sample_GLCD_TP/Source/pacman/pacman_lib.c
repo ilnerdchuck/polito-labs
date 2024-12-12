@@ -1,4 +1,5 @@
 #include "pacman/pacman_lib.h"
+#include <stdio.h>
 
 //Templates for the pixel drawing
 uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {0,0,0,0,0,0,0,0,
@@ -69,11 +70,12 @@ int initGame(){
 	//Game time text
 	//TODO: function to update Time
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
-	GUI_Text(30, 16, (uint8_t *) "60s", White, Black);
+	//GUI_Text(TIME_XOFFSET, TIME_YOFFSET, (uint8_t *) "60s", White, Black);
+	DrawTime(gameTime);
 	//Score Text
 	//TODO: function to update the score
-	GUI_Text(180, 0, (uint8_t *) "SCORE", White, Black);
-	GUI_Text(180, 16, (uint8_t *) "00000", White, Black);
+	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
+	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
 
 	int i,j;
 	for(i=0; i<GAME_ROWS; ++i){
@@ -94,15 +96,34 @@ int initGame(){
 				pacmanState.pmXpos = i;
 				pacmanState.pmYpos = j;
 				pacmanState.pmCurrDir = pmLeft;
+				pacmanState.pmNextDir = pmLeft;
 			}
 		}
 	}
-	updatePacmanPos(pmRight);
 	return 0;
 }
 															
 															
 //****************************DRAW FUNCTIONS***********************************
+/******************************************************************************
+* Function Name  : DrawTime
+* Description    : Draws Time
+* Input          : time: time value to draw 
+*				   - bkColor: Background color
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+//TODO: add color input to make it sed when it is low
+void DrawTime(uint16_t time){
+	uint8_t i, j;
+	char timeString[] = "60s";
+	sprintf(timeString,"%ds",time);
+	//Just cicle trough the matrix and draw it
+	GUI_Text(TIME_XOFFSET,TIME_YOFFSET,(uint8_t*)timeString, White, Black);
+}
+
 /******************************************************************************
 * Function Name  : DrawBlank
 * Description    : Draws an empty cell
@@ -361,6 +382,50 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 //**************************POSITION FUNCTIONS*********************************
 
 /******************************************************************************
+* Function Name  : CheckNextPos
+* Description    : Checks if next position is a wall or a teleport
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on valid cell, 1 on teleport, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+//the idea is that everything that moves has 8 keyframes i draw only the necessary 
+//pixels to update less things possible
+
+//V1.0 no key frames i delete the old update the new
+int CheckNextPos(pmDir nextDir){
+	uint8_t nextXpos, nextYpos;
+	cellType NextCell;
+	if(nextDir == pmUp){
+		nextXpos = pacmanState.pmXpos + 1;
+		nextYpos = pacmanState.pmYpos;
+	}else if(nextDir == pmDown){
+		nextXpos = pacmanState.pmXpos - 1;
+		nextYpos = pacmanState.pmYpos;
+	}else if(nextDir == pmLeft){
+		nextYpos = pacmanState.pmYpos - 1;
+		nextXpos = pacmanState.pmXpos;
+	}else if(nextDir == pmRight){
+		nextYpos = pacmanState.pmYpos + 1;
+		nextXpos = pacmanState.pmXpos;
+	} 
+	if(GameState[nextXpos][nextYpos] == blank){
+		return 0;
+	}else if(GameState[nextXpos][nextYpos] == smallDot || GameState[nextXpos][nextYpos] == largeDot){
+		return 1;
+	}else if(GameState[nextXpos][nextYpos] == teleport){
+		return 1;
+	}
+	
+	return -1;
+}
+
+
+
+/******************************************************************************
 * Function Name  : DrawFilledPacman
 * Description    : Draws a chonky PAC-MAN
 * Input          : - Xpos:  
@@ -395,7 +460,7 @@ void updatePacmanPos(pmDir nextDir){
 	} 
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 	pacmanState.pmCurrDir = nextDir;
-	DrawPacman(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir, Yellow, Black);
+	DrawPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir, Yellow, Black);
 }
 
 
