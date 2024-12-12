@@ -1,7 +1,7 @@
 #include "pacman/pacman_lib.h"
 
 //Templates for the pixel drawing
-uint8_t smallPointTmp[8][8] = {0,0,0,0,0,0,0,0,
+uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {0,0,0,0,0,0,0,0,
 															0,0,0,0,0,0,0,0,
 															0,0,0,1,1,0,0,0,
 															0,0,1,1,1,1,0,0,
@@ -10,7 +10,7 @@ uint8_t smallPointTmp[8][8] = {0,0,0,0,0,0,0,0,
 															0,0,0,0,0,0,0,0,
 															0,0,0,0,0,0,0,0};
 
-uint8_t largePointTmp[8][8] = {0,0,0,0,0,0,0,0,
+uint8_t largePointTmp[CELL_DIM][CELL_DIM] = {0,0,0,0,0,0,0,0,
 															0,0,1,1,1,1,0,0,
 															0,1,1,1,1,1,1,0,
 															0,1,1,1,1,1,1,0,
@@ -20,7 +20,7 @@ uint8_t largePointTmp[8][8] = {0,0,0,0,0,0,0,0,
 															0,0,0,0,0,0,0,0};
 
 
-uint8_t straightWallTmp[8][8] = {0,0,0,1,1,0,0,0,
+uint8_t straightWallTmp[CELL_DIM][CELL_DIM] = {0,0,0,1,1,0,0,0,
 																0,0,0,1,1,0,0,0,
 																0,0,0,1,1,0,0,0,
 																0,0,0,1,1,0,0,0,
@@ -29,7 +29,7 @@ uint8_t straightWallTmp[8][8] = {0,0,0,1,1,0,0,0,
 																0,0,0,1,1,0,0,0,
 																0,0,0,1,1,0,0,0};
 
-uint8_t angledWallTmp[8][8] = {0,0,0,1,1,0,0,0,
+uint8_t angledWallTmp[CELL_DIM][CELL_DIM] = {0,0,0,1,1,0,0,0,
 															0,0,0,1,1,0,0,0,
 															0,0,0,1,1,1,0,0,
 															0,0,0,1,1,1,1,1,
@@ -38,22 +38,23 @@ uint8_t angledWallTmp[8][8] = {0,0,0,1,1,0,0,0,
 															0,0,0,0,0,0,0,0,
 															0,0,0,0,0,0,0,0};
 
-uint8_t pacmanTmp[8][8] = {0,0,1,1,1,1,0,0,
+uint8_t pacmanTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 													 0,1,1,1,1,1,1,0,
-													 1,1,1,1,1,1,0,0,
-													 1,1,1,1,0,0,0,0,
+													 1,1,1,1,1,0,0,0,
+													 1,1,1,0,0,0,0,0,
 													 1,1,1,0,0,0,0,0,
 													 1,1,1,1,1,0,0,0,
 													 0,1,1,1,1,1,1,0,
 													 0,0,1,1,1,1,0,0};
-uint8_t pacmanFilledTmp[8][8] = {0,0,1,1,1,1,0,0,
-													 0,1,1,1,1,1,1,0,
-													 1,1,1,1,1,1,1,1,
-													 1,1,1,1,1,1,1,1,
-													 1,1,1,1,1,1,1,1,
-													 1,1,1,1,1,1,1,1,
-													 0,1,1,1,1,1,1,0,
-													 0,0,1,1,1,1,0,0};
+
+uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
+																 0,1,1,1,1,1,1,0,
+																 1,1,1,1,1,1,1,1,
+																 1,1,1,1,1,1,1,1,
+																 1,1,1,1,1,1,1,1,
+																 1,1,1,1,1,1,1,1,
+																 0,1,1,1,1,1,1,0,
+																 0,0,1,1,1,1,0,0};
 
 
 /******************************************************************************
@@ -78,26 +79,30 @@ int initGame(){
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
-				DrawPoint( j*8, i*8+32, GameState[i][j], White, Black);
+				DrawPoint( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
 				++gamePoints;
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
 								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
-				DrawWall( j*8, i*8+32, GameState[i][j], Blue, Black);
+				DrawWall( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Blue, Black);
 			}else if(GameState[i][j]==blank){
-				DrawWall( j*8, i*8+32, GameState[i][j], Black, Black);
+				DrawWall( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Black, Black);
 			}else if(GameState[i][j]==teleport){
-				DrawWall( j*8, i*8+32, GameState[i][j], Black, Black);
+				DrawWall( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Black, Black);
 			}else if(GameState[i][j]==pacman){
-				DrawPacman(j*8, i*8+32,pmLeft,Yellow,Black);
-				DrawFilledPacman(j*8,i*8+32, Yellow, Black);
+				DrawPacman(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Yellow,Black);
+				pacmanState.pmXpos = i;
+				pacmanState.pmYpos = j;
+				pacmanState.pmCurrDir = pmLeft;
 			}
 		}
 	}
+	updatePacmanPos(pmRight);
 	return 0;
 }
 															
 															
+//****************************DRAW FUNCTIONS***********************************
 /******************************************************************************
 * Function Name  : DrawBlank
 * Description    : Draws an empty cell
@@ -113,104 +118,9 @@ void DrawBlank( uint16_t Xpos, uint16_t Ypos,uint16_t bkColor){
 	uint8_t i, j;
 	//Just cicle trough the matrix and draw it
 	
-	for( i=0; i<8; ++i){
-		for( j=0; j<8; ++j){
+	for( i=0; i<CELL_DIM; ++i){
+		for( j=0; j<CELL_DIM; ++j){
 			LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
-		}
-	}
-}
-
-/******************************************************************************
-* Function Name  : DrawPacman
-* Description    : Draws PAC-MAN
-* Input          : - Xpos:  
-*                  - Ypos:  
-*                  - Orientation: 
-* Output         : None
-* Return         : 0 on success, -1 otherwise
-* Attention		 : None
-*******************************************************************************/
-
-void DrawPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_t bkColor){
-	uint8_t i, j;
-	uint8_t i_r, j_r;
-	//Draw pacman as needed by the orientation 
-	if(dir == pmRight){
-		for( i=0; i<8; ++i){
-			for( j=0; j<8; ++j){
-				if(pacmanTmp[i][j] == 1){
-						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
-				}
-				else{
-						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
-				}
-			}
-		}
-	}else if(dir == pmLeft ){
-		uint8_t i_r;
-		uint8_t j_r;
-		for( i=0,i_r=7; i<8; ++i, --i_r){
-			for( j=0, j_r=7; j<8; ++j, --j_r){
-				if(pacmanTmp[i_r][j_r] == 1){
-						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
-				}
-				else{
-						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
-				}
-			}
-		}
-	}else if(dir == pmUp){
-		uint8_t i_r;
-		uint8_t j_r;
-		for( i=0,i_r=7; i<8; ++i, --i_r){
-			for( j=0, j_r=0; j<8; ++j, ++j_r){
-				if(pacmanTmp[j_r][i_r] == 1){
-						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
-				}
-				else{
-						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
-				}
-			}
-		}
-	}else if(dir == pmDown){
-		uint8_t i_r;
-		uint8_t j_r;
-		for( i=0,i_r =0; i<8; ++i, ++i_r){
-			for( j=0, j_r = 0; j<8; ++j, ++j_r){
-				if(pacmanTmp[j_r][i_r] == 1){
-						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
-				}
-				else{
-						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
-				}
-			}
-		}
-	}
-}
-
-/******************************************************************************
-* Function Name  : DrawFilledPacman
-* Description    : Draws a chonky PAC-MAN
-* Input          : - Xpos:  
-*                  - Ypos:  
-*                  - Orientation: 
-* Output         : None
-* Return         : 0 on success, -1 otherwise
-* Attention		 : None
-*******************************************************************************/
-
-void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t bkColor){
-	uint8_t i, j;
-	uint8_t i_r, j_r;
-	//Draw pacman as needed by the orientation 	
-	for( i=0; i<8; ++i){
-		for( j=0; j<8; ++j){
-			if(pacmanFilledTmp[i][j] == 1){
-					LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
-			}
-			else{
-					LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
-			}
 		}
 	}
 }
@@ -230,13 +140,13 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 int DrawPoint( uint16_t Xpos, uint16_t Ypos,uint8_t pointType, uint16_t pointColor, uint16_t bkColor){
 	uint16_t i, j;
 	// Take the correct matrix template to draw the point
-	uint8_t (*pointTemplate)[8] = pointType==smallDot? smallPointTmp : pointType==largeDot? largePointTmp: 0;
+	uint8_t (*pointTemplate)[CELL_DIM] = pointType==smallDot? smallPointTmp : pointType==largeDot? largePointTmp: 0;
 	if(pointTemplate == 0){
 			return -1;
 	}
 	//Just cicle trough the matrix and draw it
-	for( i=0; i<8; ++i){
-		for( j=0; j<8; ++j){
+	for( i=0; i<CELL_DIM; ++i){
+		for( j=0; j<CELL_DIM; ++j){
 			if(pointTemplate[i][j] == 1){
 					LCD_SetPoint( Xpos + j, Ypos + i, pointColor);
 			}
@@ -263,7 +173,7 @@ int DrawPoint( uint16_t Xpos, uint16_t Ypos,uint8_t pointType, uint16_t pointCol
 int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor, uint16_t bkColor){
 	uint8_t i, j;
 	// Take the correct matrix template to draw the correct wall
-	uint8_t (*wallTemplate)[8] = (wallType==hWall || wallType==vWall )? straightWallTmp : 
+	uint8_t (*wallTemplate)[CELL_DIM] = (wallType==hWall || wallType==vWall )? straightWallTmp : 
 															(wallType==blAngle || wallType==brAngle 
 															||wallType==tlAngle ||wallType==trAngle)? 
 															angledWallTmp : 0;
@@ -274,8 +184,8 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 	//The other cases i will read the template matrix to draw the correct
 	//orientation of the shape.
 	if(wallType == vWall){
-		for( i=0; i<8; ++i){
-			for( j=0; j<8; ++j){
+		for( i=0; i<CELL_DIM; ++i){
+			for( j=0; j<CELL_DIM; ++j){
 				if(wallTemplate[i][j] == 1){
 						LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
 				}
@@ -287,8 +197,8 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 	}else if(wallType == hWall){
 		uint8_t i_r;
 		uint8_t j_r;
-		for( i=0,i_r =0; i<8; ++i, ++i_r){
-			for( j=0, j_r = 0; j<8; ++j, ++j_r){
+		for( i=0,i_r =0; i<CELL_DIM; ++i, ++i_r){
+			for( j=0, j_r = 0; j<CELL_DIM; ++j, ++j_r){
 				if(wallTemplate[j_r][i_r] == 1){
 						LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
 				}
@@ -298,8 +208,8 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 			}
 		}
 	}else if(wallType == blAngle){
-		for( i=0; i<8; ++i){
-			for( j=0; j<8; ++j){
+		for( i=0; i<CELL_DIM; ++i){
+			for( j=0; j<CELL_DIM; ++j){
 				if(wallTemplate[i][j] == 1){
 						LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
 				}
@@ -311,8 +221,8 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 	}else if(wallType == brAngle){
 		uint8_t i_r;
 		uint8_t j_r;
-		for( i=0,i_r =0; i<8; ++i, ++i_r){
-			for( j=0, j_r = 7; j<8; ++j, --j_r){
+		for( i=0,i_r =0; i<CELL_DIM; ++i, ++i_r){
+			for( j=0, j_r = CELL_DIM-1; j<CELL_DIM; ++j, --j_r){
 				if(wallTemplate[i_r][j_r] == 1){
 						LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
 				}
@@ -325,8 +235,8 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 		uint8_t i_r;
 		uint8_t j_r;
 		//
-		for( i=0, i_r=7; i<8; ++i, --i_r){
-			for( j=0, j_r = 0; j<8; ++j, ++j_r){
+		for( i=0, i_r=CELL_DIM-1; i<CELL_DIM; ++i, --i_r){
+			for( j=0, j_r = 0; j<CELL_DIM; ++j, ++j_r){
 				if(wallTemplate[i_r][j_r] == 1){
 						LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
 				}
@@ -338,8 +248,8 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 	}else if(wallType == trAngle){
 		uint8_t i_r;
 		uint8_t j_r;
-		for( i=0, i_r=7; i<8; ++i, --i_r){
-			for( j=0, j_r=7; j<8; ++j, --j_r){
+		for( i=0, i_r=CELL_DIM-1; i<CELL_DIM; ++i, --i_r){
+			for( j=0, j_r=CELL_DIM-1; j<CELL_DIM; ++j, --j_r){
 				if(wallTemplate[i_r][j_r] == 1){
 						LCD_SetPoint( Xpos + j, Ypos + i, wallColor);
 				}
@@ -351,4 +261,143 @@ int DrawWall( uint16_t Xpos, uint16_t Ypos,uint8_t wallType, uint16_t wallColor,
 	}
 	return 0;
 }
+
+/******************************************************************************
+* Function Name  : DrawPacman
+* Description    : Draws PAC-MAN
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void DrawPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_t bkColor){
+	uint8_t i, j;
+	uint8_t i_r, j_r;
+	//Draw pacman as needed by the orientation 
+	if(dir == pmRight){
+		for( i=0; i<CELL_DIM; ++i){
+			for( j=0; j<CELL_DIM; ++j){
+				if(pacmanTmp[i][j] == 1){
+						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
+				}
+				else{
+						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+				}
+			}
+		}
+	}else if(dir == pmLeft ){
+		uint8_t i_r;
+		uint8_t j_r;
+		for( i=0,i_r=CELL_DIM-1; i<CELL_DIM; ++i, --i_r){
+			for( j=0, j_r=CELL_DIM-1; j<CELL_DIM; ++j, --j_r){
+				if(pacmanTmp[i_r][j_r] == 1){
+						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
+				}
+				else{
+						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+				}
+			}
+		}
+	}else if(dir == pmUp){
+		uint8_t i_r;
+		uint8_t j_r;
+		for( i=0,i_r=CELL_DIM-1; i<CELL_DIM; ++i, --i_r){
+			for( j=0, j_r=0; j<CELL_DIM; ++j, ++j_r){
+				if(pacmanTmp[j_r][i_r] == 1){
+						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
+				}
+				else{
+						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+				}
+			}
+		}
+	}else if(dir == pmDown){
+		uint8_t i_r;
+		uint8_t j_r;
+		for( i=0,i_r =0; i<CELL_DIM; ++i, ++i_r){
+			for( j=0, j_r = 0; j<CELL_DIM; ++j, ++j_r){
+				if(pacmanTmp[j_r][i_r] == 1){
+						LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
+				}
+				else{
+						LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+				}
+			}
+		}
+	}
+}
+
+/******************************************************************************
+* Function Name  : DrawFilledPacman
+* Description    : Draws a chonky PAC-MAN
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t bkColor){
+	uint8_t i, j;
+	uint8_t i_r, j_r;
+	//Draw pacman as needed by the orientation 	
+	for( i=0; i<CELL_DIM; ++i){
+		for( j=0; j<CELL_DIM; ++j){
+			if(pacmanFilledTmp[i][j] == 1){
+					LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
+			}
+			else{
+					LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+			}
+		}
+	}
+}
+
+//**************************END DRAW FUNCTIONS*********************************
+//**************************POSITION FUNCTIONS*********************************
+
+/******************************************************************************
+* Function Name  : DrawFilledPacman
+* Description    : Draws a chonky PAC-MAN
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+//the idea is that everything that moves has 8 keyframes i draw only the necessary 
+//pixels to update less things possible
+
+//V1.0 no key frames i delete the old update the new
+void updatePacmanPos(pmDir nextDir){
+	//
+	uint8_t i, j;
+	uint8_t i_r, j_r;
+	//Draw pacman as needed by the orientation 	
+	
+	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
+	
+	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
+	if(nextDir == pmUp){
+		++pacmanState.pmXpos;
+	}else if(nextDir == pmDown){
+		--pacmanState.pmXpos;
+	}else if(nextDir == pmLeft){
+		--pacmanState.pmYpos;
+	}else if(nextDir == pmRight){
+		++pacmanState.pmYpos;
+	} 
+	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+	pacmanState.pmCurrDir = nextDir;
+	DrawPacman(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir, Yellow, Black);
+}
+
+
+
 

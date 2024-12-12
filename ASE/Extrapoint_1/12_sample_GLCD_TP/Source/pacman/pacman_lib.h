@@ -6,6 +6,8 @@
 //and behaviour are within this drawing constraints.
 #define GAME_ROWS 34
 #define GAME_COLUMNS 30
+#define TEXT_OFFSET 32
+#define CELL_DIM 8
 
 //Types of map cell
 typedef enum : uint8_t {
@@ -30,9 +32,18 @@ typedef enum : uint8_t {
 	pmRight,	//PAC-MAN facing Right
 } pmDir;
 
+typedef struct{
+	uint8_t pmXpos;			//Current X position
+	uint8_t pmYpos;		 	//Current Y position
+	pmDir   pmCurrDir; 	//Current Direction
+	pmDir   pmNextDir; 	//Next requested Direction
+}pmState;
+
 //Everyone can check the Game State with the matrix
 extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
 extern uint16_t gamePoints;
+extern pmState pacmanState;
+
 //Draw functions
 int initGame();
 void DrawBlank( uint16_t, uint16_t, uint16_t);
@@ -40,3 +51,8 @@ void DrawPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t);
 void DrawFilledPacman( uint16_t, uint16_t, uint16_t, uint16_t);
 int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
+
+//Movement functions
+void updatePacmanPos(pmDir);
+
+
