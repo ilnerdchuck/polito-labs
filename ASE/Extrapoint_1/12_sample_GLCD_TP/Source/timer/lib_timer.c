@@ -149,7 +149,7 @@ uint32_t init_timer ( uint8_t timer_num, uint32_t TimerInterval )
 		LPC_TIM1->MCR = 3;							/* Interrupt and Reset on MR1 */
 
 		NVIC_EnableIRQ(TIMER1_IRQn);
-		NVIC_SetPriority(TIMER1_IRQn, 1);
+		NVIC_SetPriority(TIMER1_IRQn, 0);
 		return (1);
   }else if ( timer_num == 2 ){
 		LPC_TIM2->MR0 = TimerInterval;

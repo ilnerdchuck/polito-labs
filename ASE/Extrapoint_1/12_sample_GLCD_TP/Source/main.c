@@ -25,6 +25,8 @@
 //#include "TouchPanel/TouchPanel.h"
 #include "timer/timer.h"
 #include "pacman/pacman_lib.h"
+#include "joystick/joystick.h"
+#include "RIT/RIT.h"
 
 
 #ifdef SIMULATOR
@@ -105,10 +107,15 @@ int main(void)
 	
 	int _err = initGame();
 	
+	joystick_init();
+	init_RIT(0x004C4B40);
+	enable_RIT();
+	
 	//TODO: MAke a function to initialize the hardware
 	init_timer(0,0x001312D0); 							/* a timer																						*/
 	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	Game tick timer */
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
+	
 	
 	enable_timer(0);
 	enable_timer(1);

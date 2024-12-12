@@ -13,7 +13,8 @@
 #include "../GLCD/GLCD.h" 
 #include "../TouchPanel/TouchPanel.h"
 #include "pacman/pacman_lib.h"
-#include <stdio.h> /*for sprintf*/
+#include "RIT/RIT.h"
+#include <stdio.h> 
 
 /******************************************************************************
 ** Function name:		Timer0_IRQHandler
@@ -80,8 +81,10 @@ void TIMER2_IRQHandler (void){
 	DrawTime(--gameTime);	//otherwise update the neext position
 	if(!gameTime){
 		//TODO: interrupt everthing and game over
-		//for now reset to 60s
-		gameTime = 60;
+		//for now disables the joystick and this timer
+		LPC_TIM2->IR = 1;
+		disable_RIT();
+		disable_timer(2);
 	}
   LPC_TIM2->IR = 1;			/* clear interrupt flag */
   return;

@@ -2,60 +2,60 @@
 #include <stdio.h>
 
 //Templates for the pixel drawing
-uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {0,0,0,0,0,0,0,0,
-															0,0,0,0,0,0,0,0,
-															0,0,0,1,1,0,0,0,
-															0,0,1,1,1,1,0,0,
-															0,0,1,1,1,1,0,0,
-															0,0,0,1,1,0,0,0,
-															0,0,0,0,0,0,0,0,
-															0,0,0,0,0,0,0,0};
+uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {	0,0,0,0,0,0,0,0,
+																							0,0,0,0,0,0,0,0,
+																							0,0,0,1,1,0,0,0,
+																							0,0,1,1,1,1,0,0,
+																							0,0,1,1,1,1,0,0,
+																							0,0,0,1,1,0,0,0,
+																							0,0,0,0,0,0,0,0,
+																							0,0,0,0,0,0,0,0};
 
-uint8_t largePointTmp[CELL_DIM][CELL_DIM] = {0,0,0,0,0,0,0,0,
-															0,0,1,1,1,1,0,0,
-															0,1,1,1,1,1,1,0,
-															0,1,1,1,1,1,1,0,
-															0,1,1,1,1,1,1,0,
-															0,1,1,1,1,1,1,0,
-															0,0,1,1,1,1,0,0,
-															0,0,0,0,0,0,0,0};
+uint8_t largePointTmp[CELL_DIM][CELL_DIM] = {	0,0,0,0,0,0,0,0,
+																							0,0,1,1,1,1,0,0,
+																							0,1,1,1,1,1,1,0,
+																							0,1,1,1,1,1,1,0,
+																							0,1,1,1,1,1,1,0,
+																							0,1,1,1,1,1,1,0,
+																							0,0,1,1,1,1,0,0,
+																							0,0,0,0,0,0,0,0};
 
 
-uint8_t straightWallTmp[CELL_DIM][CELL_DIM] = {0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0,
-																0,0,0,1,1,0,0,0};
+uint8_t straightWallTmp[CELL_DIM][CELL_DIM] = {	0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0,
+																								0,0,0,1,1,0,0,0};
 
-uint8_t angledWallTmp[CELL_DIM][CELL_DIM] = {0,0,0,1,1,0,0,0,
-															0,0,0,1,1,0,0,0,
-															0,0,0,1,1,1,0,0,
-															0,0,0,1,1,1,1,1,
-															0,0,0,0,1,1,1,1,
-															0,0,0,0,0,0,0,0,
-															0,0,0,0,0,0,0,0,
-															0,0,0,0,0,0,0,0};
+uint8_t angledWallTmp[CELL_DIM][CELL_DIM] = {	0,0,0,1,1,0,0,0,
+																							0,0,0,1,1,0,0,0,
+																							0,0,0,1,1,1,0,0,
+																							0,0,0,1,1,1,1,1,
+																							0,0,0,0,1,1,1,1,
+																							0,0,0,0,0,0,0,0,
+																							0,0,0,0,0,0,0,0,
+																							0,0,0,0,0,0,0,0};
 
 uint8_t pacmanTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
-													 0,1,1,1,1,1,1,0,
-													 1,1,1,1,1,0,0,0,
-													 1,1,1,0,0,0,0,0,
-													 1,1,1,0,0,0,0,0,
-													 1,1,1,1,1,0,0,0,
-													 0,1,1,1,1,1,1,0,
-													 0,0,1,1,1,1,0,0};
+																				 0,1,1,1,1,1,1,0,
+																				 1,1,1,1,1,0,0,0,
+																				 1,1,1,0,0,0,0,0,
+																				 1,1,1,0,0,0,0,0,
+																				 1,1,1,1,1,0,0,0,
+																				 0,1,1,1,1,1,1,0,
+																				 0,0,1,1,1,1,0,0};
 
 uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
-																 0,1,1,1,1,1,1,0,
-																 1,1,1,1,1,1,1,1,
-																 1,1,1,1,1,1,1,1,
-																 1,1,1,1,1,1,1,1,
-																 1,1,1,1,1,1,1,1,
-																 0,1,1,1,1,1,1,0,
-																 0,0,1,1,1,1,0,0};
+																							 0,1,1,1,1,1,1,0,
+																							 1,1,1,1,1,1,1,1,
+																							 1,1,1,1,1,1,1,1,
+																							 1,1,1,1,1,1,1,1,
+																							 1,1,1,1,1,1,1,1,
+																							 0,1,1,1,1,1,1,0,
+																							 0,0,1,1,1,1,0,0};
 
 
 /******************************************************************************
@@ -491,11 +491,12 @@ void updatePacmanPos(pmDir nextDir){
 	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
 	
 	//TODO: check if is a teleport and don't change it to blank
+	//and if teleport special update
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
 	if(nextDir == pmUp){
-		++pacmanState.pmXpos;
-	}else if(nextDir == pmDown){
 		--pacmanState.pmXpos;
+	}else if(nextDir == pmDown){
+		++pacmanState.pmXpos;
 	}else if(nextDir == pmLeft){
 		--pacmanState.pmYpos;
 	}else if(nextDir == pmRight){
@@ -503,7 +504,7 @@ void updatePacmanPos(pmDir nextDir){
 	} 
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 	pacmanState.pmCurrDir = nextDir;
-	DrawPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir, Yellow, Black);
+	DrawPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir,Yellow, Black);
 }
 
 
