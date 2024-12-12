@@ -32,11 +32,11 @@ typedef enum : uint8_t {
 
 //Everyone can check the Game State with the matrix
 extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
-
+extern uint16_t gamePoints;
 //Draw functions
 int initGame();
 void DrawBlank( uint16_t, uint16_t, uint16_t);
 void DrawPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t);
-void DrawFilledPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t)
+void DrawFilledPacman( uint16_t, uint16_t, uint16_t, uint16_t);
 int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);

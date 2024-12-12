@@ -79,6 +79,7 @@ int initGame(){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
 				DrawPoint( j*8, i*8+32, GameState[i][j], White, Black);
+				++gamePoints;
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
 								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
@@ -89,6 +90,7 @@ int initGame(){
 				DrawWall( j*8, i*8+32, GameState[i][j], Black, Black);
 			}else if(GameState[i][j]==pacman){
 				DrawPacman(j*8, i*8+32,pmLeft,Yellow,Black);
+				DrawFilledPacman(j*8,i*8+32, Yellow, Black);
 			}
 		}
 	}
@@ -197,7 +199,7 @@ void DrawPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_
 * Attention		 : None
 *******************************************************************************/
 
-void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_t bkColor){
+void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t bkColor){
 	uint8_t i, j;
 	uint8_t i_r, j_r;
 	//Draw pacman as needed by the orientation 	
