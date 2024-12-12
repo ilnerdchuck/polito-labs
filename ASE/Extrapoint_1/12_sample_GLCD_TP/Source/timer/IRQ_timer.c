@@ -44,6 +44,9 @@ void TIMER1_IRQHandler (void){
 	int _res = CheckNextPos(pacmanState.pmNextDir);
 	if(_res == -1){
 		//in this case is a wall so i exit and leave the state as is 
+		// but draw a filled pacman as the main game
+		DrawFilledPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET, Yellow, Black);
+		LPC_TIM1->IR = 1;	
 		return;
 	}else if(_res == 0){
 			//small dot;
