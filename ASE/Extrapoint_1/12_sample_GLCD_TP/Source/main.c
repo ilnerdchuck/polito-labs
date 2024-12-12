@@ -46,9 +46,13 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 	teleport, //9
 	blank 		//10
 */
+
 uint16_t gamePoints = 0;
+uint16_t playerPoints = 0;
+//uint8_t playerLives = 2;
 pmState pacmanState;
-uint16_t gameTime = 70;
+uint16_t gameTime = 60;
+
 //TODO: Add big pills at random
 cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,10, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,
@@ -99,11 +103,10 @@ int main(void)
 	LCD_Clear(Black);
 	
 	init_timer(0,0x001312D0); 							/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0*/
-	init_timer(1,0x00065B9A); 						    /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	*/
+	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	*/
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				*/
 	
 	int _err = initGame();
-	
 	enable_timer(0);
 	enable_timer(1);
 	enable_timer(2);

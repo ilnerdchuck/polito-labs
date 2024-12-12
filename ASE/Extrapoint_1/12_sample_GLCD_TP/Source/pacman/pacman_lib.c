@@ -75,8 +75,8 @@ int initGame(){
 	//Score Text
 	//TODO: function to update the score
 	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
-	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
-
+	//GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
+	DrawScore(playerPoints);
 	int i,j;
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
@@ -121,9 +121,36 @@ void DrawTime(uint16_t time){
 	char timeString[] = "60s";
 	sprintf(timeString,"%ds",time);
 	//Just cicle trough the matrix and draw it
-	GUI_Text(TIME_XOFFSET,TIME_YOFFSET,(uint8_t*)timeString, White, Black);
+	GUI_Text(TIME_XOFFSET, TIME_YOFFSET,(uint8_t*)timeString, White, Black);
 }
 
+/******************************************************************************
+* Function Name  : DrawScore
+* Description    : Draws Score
+* Input          : Score: Score value to draw 
+*				   - bkColor: Background color
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+//TODO: add color input
+void DrawScore(uint16_t score){
+	uint8_t i, j;
+	char scoreString[] = "00000";
+	if(score<10){
+		sprintf(scoreString,"0000%d",score);
+	}else if(score<100){
+		sprintf(scoreString,"000%d",score);
+	}else if(score<1000){
+		sprintf(scoreString,"00%d",score);
+	}else if(score<10000){
+		sprintf(scoreString,"0%d",score);
+	}else{
+		sprintf(scoreString,"%d",score);
+	}
+	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET,(uint8_t*)scoreString, White, Black);
+}
 /******************************************************************************
 * Function Name  : DrawBlank
 * Description    : Draws an empty cell
@@ -388,7 +415,7 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 *                  - Ypos:  
 *                  - Orientation: 
 * Output         : None
-* Return         : 0 on valid cell, 1 on teleport, -1 otherwise
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
 * Attention		 : None
 *******************************************************************************/
 
@@ -413,13 +440,14 @@ int CheckNextPos(pmDir nextDir){
 		nextXpos = pacmanState.pmXpos;
 	} 
 	if(GameState[nextXpos][nextYpos] == blank){
+		return 3;
+	}else if(GameState[nextXpos][nextYpos] == smallDot){
 		return 0;
-	}else if(GameState[nextXpos][nextYpos] == smallDot || GameState[nextXpos][nextYpos] == largeDot){
+	}else if(GameState[nextXpos][nextYpos] == largeDot){
 		return 1;
 	}else if(GameState[nextXpos][nextYpos] == teleport){
-		return 1;
+		return 2;
 	}
-	
 	return -1;
 }
 

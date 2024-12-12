@@ -41,10 +41,18 @@ void TIMER0_IRQHandler (void){
 **
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
-	int _err = CheckNextPos(pacmanState.pmNextDir);
-	if(_err == -1){
+	int _res = CheckNextPos(pacmanState.pmNextDir);
+	if(_res == -1){
 		//in this case is a wall so i exit and leave the state as is 
 		return;
+	}else if(_res == 0){
+			//small dot;
+			playerPoints += 10;
+			DrawScore(playerPoints);
+	}else if(_res == 1){
+			//large dot;
+			playerPoints += 50;
+			DrawScore(playerPoints);
 	}
 	//otherwise update the neext position
 	updatePacmanPos(pacmanState.pmNextDir);

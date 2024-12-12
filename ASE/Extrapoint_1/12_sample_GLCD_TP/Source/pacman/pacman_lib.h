@@ -49,9 +49,12 @@ extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
 extern uint16_t gamePoints;
 extern pmState pacmanState;
 extern uint16_t gameTime;
+extern uint16_t playerPoints;
+
 //Draw functions
 int initGame();
-void DrawTime(uint16_t time);
+void DrawTime(uint16_t);
+void DrawScore(uint16_t);
 void DrawBlank( uint16_t, uint16_t, uint16_t);
 void DrawPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t);
 void DrawFilledPacman( uint16_t, uint16_t, uint16_t, uint16_t);
