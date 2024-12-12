@@ -91,7 +91,6 @@ cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 7
 };
 
-
 int main(void)
 {
   SystemInit();  												/* System Initialization (i.e., PLL)  */
@@ -100,13 +99,17 @@ int main(void)
   //TP_Init();
 	//TouchPanel_Calibrate();
 
-	LCD_Clear(Black);
+	//TODO: i can miticate this by drawing direcly the game
+	//LCD_Clear(Black);
 	
-	init_timer(0,0x001312D0); 							/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0*/
-	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	*/
-	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				*/
 	
 	int _err = initGame();
+	
+	//TODO: MAke a function to initialize the hardware
+	init_timer(0,0x001312D0); 							/* a timer																						*/
+	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	Game tick timer */
+	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
+	
 	enable_timer(0);
 	enable_timer(1);
 	enable_timer(2);
@@ -118,7 +121,6 @@ int main(void)
 		__ASM("wfi");
   }
 }
-
 /*********************************************************************************************************
       END FILE
 *********************************************************************************************************/

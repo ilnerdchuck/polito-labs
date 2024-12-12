@@ -10,7 +10,6 @@
 #define SCORE_YOFFSET 16
 #define TIME_XOFFSET 42
 #define TIME_YOFFSET 16
-
 #define TEXT_OFFSET 32
 #define CELL_DIM 8
 
@@ -35,6 +34,7 @@ typedef enum : uint8_t {
 	pmDown, 	//PAC-MAN facing Down
 	pmLeft,  	//PAC-MAN facing Left
 	pmRight,	//PAC-MAN facing Right
+	pmStuck		//PAC-MAN facing a wall
 } pmDir;
 
 typedef struct{

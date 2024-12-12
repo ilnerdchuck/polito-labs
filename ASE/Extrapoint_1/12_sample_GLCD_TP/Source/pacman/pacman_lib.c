@@ -67,6 +67,20 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 * Attention		 : None
 *******************************************************************************/
 int initGame(){
+	int i,j;
+	//TODO: try to inspect the LCD_init to see if i can init in all black
+	//init game text zone and bottom zone
+	for(i=0;i<TEXT_OFFSET;++i){
+		for(j=0;j<MAX_X;++j){
+			LCD_SetPoint(j,i,Black);
+		}
+	}
+	//bottom
+	for(i=GAME_ROWS*CELL_DIM+TEXT_OFFSET;i<MAX_Y;++i){
+		for(j=0;j<MAX_X;++j){
+			LCD_SetPoint(j,i,Black);
+		}
+	}
 	//Game time text
 	//TODO: function to update Time
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
@@ -77,20 +91,19 @@ int initGame(){
 	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
 	//GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
 	DrawScore(playerPoints);
-	int i,j;
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
-				DrawPoint( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
+				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
 				++gamePoints;
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
 								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
-				DrawWall( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Blue, Black);
+				DrawWall(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Blue, Black);
 			}else if(GameState[i][j]==blank){
-				DrawWall( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Black, Black);
+				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
 			}else if(GameState[i][j]==teleport){
-				DrawWall( j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Black, Black);
+				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
 			}else if(GameState[i][j]==pacman){
 				DrawPacman(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Yellow,Black);
 				pacmanState.pmXpos = i;
@@ -119,6 +132,7 @@ int initGame(){
 void DrawTime(uint16_t time){
 	uint8_t i, j;
 	char timeString[] = "60s";
+	//TODO:fix single digit time draws ss
 	sprintf(timeString,"%ds",time);
 	//Just cicle trough the matrix and draw it
 	GUI_Text(TIME_XOFFSET, TIME_YOFFSET,(uint8_t*)timeString, White, Black);
@@ -476,6 +490,7 @@ void updatePacmanPos(pmDir nextDir){
 	
 	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
 	
+	//TODO: check if is a teleport and don't change it to blank
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
 	if(nextDir == pmUp){
 		++pacmanState.pmXpos;
