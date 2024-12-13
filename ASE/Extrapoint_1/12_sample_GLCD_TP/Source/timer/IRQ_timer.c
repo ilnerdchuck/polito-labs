@@ -42,27 +42,29 @@ void TIMER0_IRQHandler (void){
 **
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
-	int _res = CheckNextPos(pacmanState.pmNextDir);
-	if(_res == -1){
-		//in this case is a wall so i exit and leave the state as is 
-		// but draw a filled pacman as the main game
-		if(pacmanState.pmCurrDir != pmStuck){
-			DrawFilledPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET, Yellow, Black);
+	
+	//ok to solve all issues you check nextpos: if valid u update it
+	//othewise you check next currPos if valid you move
+	//otherwise you are at a wall you draw filled pacman
+	cellType _res = CheckNextPos(pacmanState.pmNextDir); //if wall i dont do anything i go check currNext dir call
+	//If wall uses pmCurDir as next direction
+	if(CheckIfWall(_res)){
+		//non é un muro mi sposto quindi di nuova posizione
+		updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
+		pacmanState.pmCurrDir = pacmanState.pmNextDir;  
+		UpdateScore(_res);
+	}else{
+		//é un muro continuo con currdir
+		_res = CheckNextPos(pacmanState.pmCurrDir);
+		if(CheckIfWall(_res)){
+			//Pacman is not at a wall
+			updatePacmanPos(pacmanState.pmCurrDir);
+		}else if(pacmanState.pmCurrDir != pmStuck){
+			//pacman is at a wall for the ffirst time u draw filled pacman
+			updatePacmanPos(pmStuck);
 			pacmanState.pmCurrDir = pmStuck;
 		}
-		LPC_TIM1->IR = 1;	
-		return;
-	}else if(_res == 0){
-			//small dot;
-			playerPoints += 10;
-			DrawScore(playerPoints);
-	}else if(_res == 1){
-			//large dot;
-			playerPoints += 50;
-			DrawScore(playerPoints);
 	}
-	//otherwise update the neext position
-	updatePacmanPos(pacmanState.pmNextDir);
   LPC_TIM1->IR = 1;			/* clear interrupt flag */
   return;
 }

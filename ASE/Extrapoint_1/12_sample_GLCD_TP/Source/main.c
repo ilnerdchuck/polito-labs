@@ -95,7 +95,7 @@ cellType GameState[GAME_ROWS][GAME_COLUMNS]={
 
 int main(void)
 {
-  SystemInit();  												/* System Initialization (i.e., PLL)  */
+	SystemInit();  												/* System Initialization (i.e., PLL)  */
   LCD_Initialization();
 	
   //TP_Init();
@@ -104,9 +104,9 @@ int main(void)
 	//TODO: i can miticate this by drawing direcly the game
 	//LCD_Clear(Black);
 	
-	
 	int _err = initGame();
 	
+	//BUG: when the game starts keep the joystick up and pacman will go trough walls
 	joystick_init();
 	init_RIT(0x004C4B40);
 	enable_RIT();

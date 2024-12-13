@@ -57,7 +57,7 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 																							 0,1,1,1,1,1,1,0,
 																							 0,0,1,1,1,1,0,0};
 
-
+//TODO: maybe all draw functions add automatically CELL_DIM and TEXT OFFSET
 /******************************************************************************
 * Function Name  : initGame
 * Description    : initialize the game
@@ -69,17 +69,14 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 int initGame(){
 	int i,j;
 	//TODO: try to inspect the LCD_init to see if i can init in all black
+	//TODO: benchmark the LCD_Drawline besides painting pixel by pixel with LCD_SetPoint
 	//init game text zone and bottom zone
 	for(i=0;i<TEXT_OFFSET;++i){
-		for(j=0;j<MAX_X;++j){
-			LCD_SetPoint(j,i,Black);
-		}
+		LCD_DrawLine(0,i,MAX_X,i,Black);
 	}
 	//bottom
 	for(i=GAME_ROWS*CELL_DIM+TEXT_OFFSET;i<MAX_Y;++i){
-		for(j=0;j<MAX_X;++j){
-			LCD_SetPoint(j,i,Black);
-		}
+		LCD_DrawLine(0,i,MAX_X,i,Black);
 	}
 	//Game time text
 	//TODO: function to update Time
@@ -433,18 +430,14 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 * Attention		 : None
 *******************************************************************************/
 
-//the idea is that everything that moves has 8 keyframes i draw only the necessary 
-//pixels to update less things possible
-
-//V1.0 no key frames i delete the old update the new
-int CheckNextPos(pmDir nextDir){
+cellType CheckNextPos(pmDir nextDir){
 	uint8_t nextXpos, nextYpos;
-	cellType NextCell;
+	
 	if(nextDir == pmUp){
-		nextXpos = pacmanState.pmXpos + 1;
+		nextXpos = pacmanState.pmXpos - 1;
 		nextYpos = pacmanState.pmYpos;
 	}else if(nextDir == pmDown){
-		nextXpos = pacmanState.pmXpos - 1;
+		nextXpos = pacmanState.pmXpos + 1;
 		nextYpos = pacmanState.pmYpos;
 	}else if(nextDir == pmLeft){
 		nextYpos = pacmanState.pmYpos - 1;
@@ -452,30 +445,17 @@ int CheckNextPos(pmDir nextDir){
 	}else if(nextDir == pmRight){
 		nextYpos = pacmanState.pmYpos + 1;
 		nextXpos = pacmanState.pmXpos;
-	} 
-	if(GameState[nextXpos][nextYpos] == blank){
-		return 3;
-	}else if(GameState[nextXpos][nextYpos] == smallDot){
-		return 0;
-	}else if(GameState[nextXpos][nextYpos] == largeDot){
-		return 1;
-	}else if(GameState[nextXpos][nextYpos] == teleport){
-		return 2;
 	}
-	return -1;
+	return GameState[nextXpos][nextYpos];
 }
 
-
-
 /******************************************************************************
-* Function Name  : DrawFilledPacman
-* Description    : Draws a chonky PAC-MAN
-* Input          : - Xpos:  
-*                  - Ypos:  
-*                  - Orientation: 
+* Function Name  : updatePacmanPos
+* Description    : Updates PAC-MAN position
+* Input          : NextDir
 * Output         : None
-* Return         : 0 on success, -1 otherwise
-* Attention		 : None
+* Return         : None
+* Attention		 	 : None
 *******************************************************************************/
 
 //the idea is that everything that moves has 8 keyframes i draw only the necessary 
@@ -486,10 +466,11 @@ void updatePacmanPos(pmDir nextDir){
 	//
 	uint8_t i, j;
 	uint8_t i_r, j_r;
-	//Draw pacman as needed by the orientation 	
-	
+	if(nextDir == pmStuck){
+		DrawFilledPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET, Yellow, Black);
+		return;
+	}
 	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
-	
 	//TODO: check if is a teleport and don't change it to blank
 	//and if teleport special update
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
@@ -501,11 +482,58 @@ void updatePacmanPos(pmDir nextDir){
 		--pacmanState.pmYpos;
 	}else if(nextDir == pmRight){
 		++pacmanState.pmYpos;
-	} 
+	}
+	//Draw pacman as needed by the orientation 		
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 	pacmanState.pmCurrDir = nextDir;
 	DrawPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir,Yellow, Black);
 }
+//***********************END POSITION FUNCTIONS*******************************
+//**************************UTILITY FUNCTIONS*********************************
+
+/******************************************************************************
+* Function Name  : CheckIfWall
+* Description    : Checks if cell is a wall
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+int CheckIfWall(cellType checkWall){
+	if(checkWall<=7 && checkWall>=2 ){
+		return 0;
+	}
+	return -1;
+}
+
+/******************************************************************************
+* Function Name  : Update Score
+* Description    : If the cell is a point type updates and draws the score
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+int UpdateScore(cellType cell){
+	if(cell == smallDot){
+			playerPoints += 10;
+			DrawScore(playerPoints);
+	}else if(cell == largeDot){
+			playerPoints += 50;
+			DrawScore(playerPoints);
+	}
+	//TODO: add a live if reaches 1000
+	return -1;
+}
+
+//************************END UTILITY FUNCTIONS*******************************
+
 
 
 
