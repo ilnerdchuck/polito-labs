@@ -108,7 +108,7 @@ int main(void)
 	
 	//BUG: when the game starts keep the joystick up and pacman will go trough walls
 	joystick_init();
-	init_RIT(0x004C4B40);
+	init_RIT(0x00064B9A); 									//
 	enable_RIT();
 	
 	//TODO: MAke a function to initialize the hardware

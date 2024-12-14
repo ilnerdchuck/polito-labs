@@ -433,6 +433,10 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 cellType GetNextCellType(pmDir nextDir){
 	uint8_t nextXpos, nextYpos;
 	
+	if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] == teleport){
+		return GameState[pacmanState.pmXpos][pacmanState.pmYpos];
+	}
+	
 	if(nextDir == pmUp){
 		nextXpos = pacmanState.pmXpos - 1;
 		nextYpos = pacmanState.pmYpos;
@@ -468,25 +472,46 @@ void updatePacmanPos(pmDir nextDir){
 	uint8_t i_r, j_r;
 	if(nextDir == pmStuck){
 		DrawFilledPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET, Yellow, Black);
+		pacmanState.pmCurrDir = pmStuck;
 		return;
 	}
 	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
 	//TODO: check if is a teleport and don't change it to blank
 	//and if teleport special update
-	
-	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
-	if(nextDir == pmUp){
-		--pacmanState.pmXpos;
-	}else if(nextDir == pmDown){
-		++pacmanState.pmXpos;
-	}else if(nextDir == pmLeft){
-		--pacmanState.pmYpos;
-	}else if(nextDir == pmRight){
-		++pacmanState.pmYpos;
+	//Ok i could not change any state of the cell if i am currently in a tp cell
+	//thne if my currpos is a tp i switch drawing orientation
+	//i was going right i need to teleport left and viceversa
+	if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] != teleport){
+		GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
+		if(nextDir == pmUp){
+			--pacmanState.pmXpos;
+		}else if(nextDir == pmDown){
+			++pacmanState.pmXpos;
+		}else if(nextDir == pmLeft){
+			--pacmanState.pmYpos;
+		}else if(nextDir == pmRight){
+			++pacmanState.pmYpos;
+		}
+
+		//Draw pacman as needed by the orientation 		
+		if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] != teleport){
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+		}
+	}else{
+		if(nextDir == pmLeft && pacmanState.pmYpos == 0){
+			pacmanState.pmYpos = GAME_COLUMNS-1;
+		}else if(nextDir == pmRight && pacmanState.pmYpos == GAME_COLUMNS-1){
+			pacmanState.pmYpos = 0;
+		}else{
+			//senno sto uscendo dal teleport e quindi devo aggioranre come sopra ma solo la Y non la X
+			if(nextDir == pmLeft){
+				--pacmanState.pmYpos;
+			}else if(nextDir == pmRight){
+				++pacmanState.pmYpos;
+			}	
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+		}
 	}
-	
-	//Draw pacman as needed by the orientation 		
-	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 	pacmanState.pmCurrDir = nextDir;
 	DrawPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir,Yellow, Black);
 }
@@ -522,6 +547,8 @@ int CheckIfWall(cellType checkWall){
 * Attention		 : None
 *******************************************************************************/
 
+
+//TODO: BUG fix if stuck it updates score by 50
 int UpdateScore(cellType cell){
 	if(cell == smallDot){
 			playerPoints += 10;

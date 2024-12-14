@@ -51,7 +51,6 @@ void TIMER1_IRQHandler (void){
 	if(CheckIfWall(_res)){
 		//non é un muro mi sposto quindi di nuova posizione
 		updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
-		pacmanState.pmCurrDir = pacmanState.pmNextDir;  
 		UpdateScore(_res);
 	}else{
 		//é un muro continuo con currdir
@@ -62,7 +61,6 @@ void TIMER1_IRQHandler (void){
 		}else if(pacmanState.pmCurrDir != pmStuck){
 			//pacman is at a wall for the ffirst time u draw filled pacman
 			updatePacmanPos(pmStuck);
-			pacmanState.pmCurrDir = pmStuck;
 		}
 	}
   LPC_TIM1->IR = 1;			/* clear interrupt flag */
