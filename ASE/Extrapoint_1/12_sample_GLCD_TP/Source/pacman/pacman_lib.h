@@ -50,24 +50,31 @@ extern uint16_t gamePoints;
 extern pmState pacmanState;
 extern uint16_t gameTime;
 extern uint16_t playerPoints;
+extern uint8_t gameStatus;
 
 //Draw functions
 int initGame();
-void DrawTime(uint16_t);
-void DrawScore(uint16_t);
+void DrawTime(uint16_t, uint16_t, uint16_t);
+void DrawScore(uint16_t, uint16_t, uint16_t);
 void DrawBlank( uint16_t, uint16_t, uint16_t);
 void DrawPacman( uint16_t, uint16_t, pmDir, uint16_t, uint16_t);
 void DrawFilledPacman( uint16_t, uint16_t, uint16_t, uint16_t);
 int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
+void DrawMiddleText();
 
 //Movement functions
 cellType GetNextCellType(pmDir);
 void updatePacmanPos(pmDir);
 
 //Utility funcitons
+int init_hardware();
 int CheckIfWall(cellType);
 int UpdateScore(cellType);
+void SetGameWon();
+void SetGameOver();
+void PauseToggle();
+
 
 
 

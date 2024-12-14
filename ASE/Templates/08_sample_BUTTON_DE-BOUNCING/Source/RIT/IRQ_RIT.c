@@ -9,7 +9,7 @@
 *********************************************************************************************************/
 #include "LPC17xx.h"
 #include "RIT.h"
-#include "pacman/pacman_lib.h"
+#include "../led/led.h"
 
 /******************************************************************************
 ** Function name:		RIT_IRQHandler
@@ -20,43 +20,42 @@
 ** Returned value:		None
 **
 ******************************************************************************/
-int down = 0;
+
 void RIT_IRQHandler (void)
-{		
-	//Joystick handler
-	if(!(LPC_GPIO1->FIOPIN & (1<<26))){
-		//Down
-		pacmanState.pmNextDir = pmDown;
-	}else if(!(LPC_GPIO1->FIOPIN & (1<<27))){
-		//Left
-		pacmanState.pmNextDir = pmLeft;  
-	}else if(!(LPC_GPIO1->FIOPIN & (1<<28))){
-		//Right
-		pacmanState.pmNextDir = pmRight;
-	}else if (!(LPC_GPIO1->FIOPIN & (1<<29))){
-		//Up
-		pacmanState.pmNextDir = pmUp;  
-	}else{
-		pacmanState.pmNextDir = pacmanState.pmCurrDir;  
-	}
-	
-	
-	//
-	if(down == 1){
-		if(!(LPC_GPIO2->FIOPIN & (1<<10))){
-			PauseToggle();
-			//down = 0; why not this TODO
-			++down;
+{			
+	/* Static as its value persists between calls to the function. It is not reinitialized each time the function is executed.*/
+	static int down=0;	
+	down++;
+	if((LPC_GPIO2->FIOPIN & (1<<11)) == 0){  	
+		static uint8_t position=0;
+		reset_RIT();
+		switch(down){
+			case 1:
+				if( position == 7){
+					LED_On(0);
+					LED_Off(7);
+					position = 0;
+				}
+				else{
+					LED_Off(position);
+					LED_On(++position);
+				}
+				break;
+			default:
+				break;
 		}
-	}else{
-		down= down+1;
-		down = 0;
-		NVIC_EnableIRQ(EINT0_IRQn);
-		LPC_PINCON->PINSEL4 |= (1<<20);
 	}
-	//i can reset the rit bot i configured in the RIT interrupt init to reset and count
-	reset_RIT();
+	else {	/* button released */
+		down=0;			
+		disable_RIT();
+		reset_RIT();
+		NVIC_EnableIRQ(EINT1_IRQn);							 /* disable Button interrupts			*/ 
+		LPC_PINCON->PINSEL4    |= (1 << 22);     /* External interrupt 0 pin selection */
+	}
+		
+	
   LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
+	
   return;
 }
 

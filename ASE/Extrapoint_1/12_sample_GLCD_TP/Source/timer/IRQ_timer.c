@@ -42,7 +42,11 @@ void TIMER0_IRQHandler (void){
 **
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
-	
+	if(gameStatus != 0 || pacmanState.pmNextDir == pmStuck){
+		//the game is not running i dont have to update (error handling)
+		LPC_TIM1->IR = 1;	
+		return;
+	}
 	//ok to solve all issues you check nextpos: if valid u update it
 	//othewise you check next currPos if valid you move
 	//otherwise you are at a wall you draw filled pacman
@@ -52,13 +56,13 @@ void TIMER1_IRQHandler (void){
 		//non é un muro mi sposto quindi di nuova posizione
 		updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
 		UpdateScore(_res);
-	}else{
+	}else if(pacmanState.pmCurrDir != pmStuck){
 		//é un muro continuo con currdir
 		_res = GetNextCellType(pacmanState.pmCurrDir);
 		if(CheckIfWall(_res)){
 			//Pacman is not at a wall
 			updatePacmanPos(pacmanState.pmCurrDir);
-		}else if(pacmanState.pmCurrDir != pmStuck){
+		}else{
 			//pacman is at a wall for the ffirst time u draw filled pacman
 			updatePacmanPos(pmStuck);
 		}
@@ -78,13 +82,9 @@ void TIMER1_IRQHandler (void){
 ******************************************************************************/
 void TIMER2_IRQHandler (void){
 	//handles game time
-	DrawTime(--gameTime);	//otherwise update the neext position
+	DrawTime(--gameTime, White, Black);	//otherwise update the neext position
 	if(!gameTime){
-		//TODO: interrupt everthing and game over
-		//for now disables the joystick and this timer
-		LPC_TIM2->IR = 1;
-		disable_RIT();
-		disable_timer(2);
+		SetGameOver();
 	}
   LPC_TIM2->IR = 1;			/* clear interrupt flag */
   return;

@@ -79,17 +79,19 @@ int initGame(){
 		LCD_DrawLine(0,i,MAX_X,i,Black);
 	}
 	//Game time text
-	//TODO: function to update Time
+	
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
 	//GUI_Text(TIME_XOFFSET, TIME_YOFFSET, (uint8_t *) "60s", White, Black);
-	DrawTime(gameTime);
+	DrawTime(gameTime, White, Black);
+	
 	//Score Text
-	//TODO: function to update the score
 	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
 	//GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
-	DrawScore(playerPoints);
+	DrawScore(playerPoints, White, Black);
+	
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
+			//TODO:do a function to draw instead of this mess (DrawCell(cellType cell) e disegna tutto)
 			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
 				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
 				++gamePoints;
@@ -110,6 +112,7 @@ int initGame(){
 			}
 		}
 	}
+	DrawMiddleText();
 	return 0;
 }
 															
@@ -126,13 +129,13 @@ int initGame(){
 *******************************************************************************/
 
 //TODO: add color input to make it sed when it is low
-void DrawTime(uint16_t time){
+void DrawTime(uint16_t time, uint16_t textColor, uint16_t bkColor){
 	uint8_t i, j;
 	char timeString[] = "60s";
 	//TODO:fix single digit time draws ss
 	sprintf(timeString,"%ds",time);
 	//Just cicle trough the matrix and draw it
-	GUI_Text(TIME_XOFFSET, TIME_YOFFSET,(uint8_t*)timeString, White, Black);
+	GUI_Text(TIME_XOFFSET, TIME_YOFFSET,(uint8_t*)timeString, textColor, bkColor);
 }
 
 /******************************************************************************
@@ -146,7 +149,7 @@ void DrawTime(uint16_t time){
 *******************************************************************************/
 
 //TODO: add color input
-void DrawScore(uint16_t score){
+void DrawScore(uint16_t score, uint16_t textColor, uint16_t bkColor){
 	uint8_t i, j;
 	char scoreString[] = "00000";
 	if(score<10){
@@ -160,7 +163,7 @@ void DrawScore(uint16_t score){
 	}else{
 		sprintf(scoreString,"%d",score);
 	}
-	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET,(uint8_t*)scoreString, White, Black);
+	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET,(uint8_t*)scoreString, textColor, bkColor);
 }
 /******************************************************************************
 * Function Name  : DrawBlank
@@ -416,6 +419,63 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 	}
 }
 
+/******************************************************************************
+* Function Name  : PrintMiddleText
+* Description    : 	Draws text in the middle of the screen maybe a can draw 
+*										at the top of the screen
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void DrawMiddleText(){
+	//3 tipes of string based on gamestate
+	//Pause clean and write the pause string
+	if(gameStatus == 1){
+		GUI_Text(12*CELL_DIM,16*CELL_DIM+TEXT_OFFSET,(uint8_t*)"PAUSE",Yellow,Black);
+		return;
+	}
+	//Game Won
+	if(gameStatus == 2){
+		GUI_Text(10*CELL_DIM,16*CELL_DIM+TEXT_OFFSET,(uint8_t*)"!VICTORY!",Yellow,Black);
+		return;
+	}
+	//Game Over
+	if(gameStatus == 3){
+		GUI_Text(12*CELL_DIM+4,16*CELL_DIM+TEXT_OFFSET,(uint8_t*)"GAME",Yellow,Black);
+		GUI_Text(12*CELL_DIM+4,18*CELL_DIM+TEXT_OFFSET,(uint8_t*)"OVER",Yellow,Black);
+		return;
+	}
+	//sennó puliamo le celle dalla x=16 y=10 alla x=20 y=19
+	
+	
+	//TODO: understand why if it is not volatile it assigns a memory address
+	uint8_t i,j;
+	for(i=16; i<=20; ++i){
+		for(j=10;j<=19; ++j){
+			//TODO:do a function to draw instead of this mess 
+			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
+				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
+			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
+								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
+								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
+				DrawWall(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Blue, Black);
+			}else if(GameState[i][j]==blank){
+				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
+			}else if(GameState[i][j]==teleport){
+				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
+			}else if(GameState[i][j]==pacman){
+				DrawPacman(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Yellow,Black);
+			}
+		}
+	}
+	
+	return;
+}
+
 //**************************END DRAW FUNCTIONS*********************************
 //**************************POSITION FUNCTIONS*********************************
 
@@ -429,7 +489,6 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 * Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
 * Attention		 : None
 *******************************************************************************/
-
 cellType GetNextCellType(pmDir nextDir){
 	uint8_t nextXpos, nextYpos;
 	
@@ -552,15 +611,112 @@ int CheckIfWall(cellType checkWall){
 int UpdateScore(cellType cell){
 	if(cell == smallDot){
 			playerPoints += 10;
-			DrawScore(playerPoints);
+			DrawScore(playerPoints, White, Black);
+			--gamePoints;
 	}else if(cell == largeDot){
 			playerPoints += 50;
-			DrawScore(playerPoints);
+			DrawScore(playerPoints, White, Black);
+			--gamePoints;
+	}
+	if(!gamePoints){
+		SetGameWon();
 	}
 	//TODO: add a live if reaches 1000
 	return -1;
 }
+/******************************************************************************
+* Function Name  : PauseToggle
+* Description    : Toggle pause
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
 
+void PauseToggle(){
+	//per pausare disablito tutti i timer ez
+	if(gameStatus == 1){
+		gameStatus = 0;
+		enable_timer(1);
+		enable_timer(2);
+	}else if(gameStatus == 0){
+		disable_timer(0);
+		disable_timer(1);
+		disable_timer(2);
+		gameStatus = 1;
+	}
+	DrawMiddleText();
+	return;
+}
+
+/******************************************************************************
+* Function Name  : SetGameOver
+* Description    : Toggle pause
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void SetGameOver(){
+	//per pausare disablito tutti i timer ez
+	gameStatus = 3;
+	disable_timer(0);
+	disable_timer(1);
+	disable_timer(2);
+	disable_RIT();
+	DrawMiddleText();
+	return;
+}
+
+/******************************************************************************
+* Function Name  : SetGameWon
+* Description    : Toggle pause
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void SetGameWon(){
+	//per pausare disablito tutti i timer ez
+	gameStatus = 2;
+	disable_timer(0);
+	disable_timer(1);
+	disable_timer(2);
+	disable_RIT();
+	DrawMiddleText();
+	return;
+}
+/******************************************************************************
+* Function Name  : init_hardware
+* Description    : Initialize hardware needed
+* Input          : None
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+int init_hardware(){
+	BUTTON_init();
+	joystick_init();
+	
+	init_timer(0,0x001312D0); 							/* a timer																						*/
+	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	Game tick timer */
+	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
+	init_RIT(0x00064B9A);
+	enable_RIT();
+
+	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
+	LPC_SC->PCON &= ~(0x2);		
+	return 0;
+}
 //************************END UTILITY FUNCTIONS*******************************
 
 

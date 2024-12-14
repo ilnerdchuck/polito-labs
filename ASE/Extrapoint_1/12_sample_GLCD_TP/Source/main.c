@@ -27,7 +27,7 @@
 #include "pacman/pacman_lib.h"
 #include "joystick/joystick.h"
 #include "RIT/RIT.h"
-
+#include "button_EXINT/button.h"
 
 #ifdef SIMULATOR
 extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emulator to find the symbol (can be placed also inside system_LPC17xx.h but since it is RO, it needs more work)
@@ -55,6 +55,8 @@ uint16_t playerPoints = 0;	//Handles player pointsl
 uint16_t gamePoints = 0; 		//Handles how many white points are in the game 
 pmState pacmanState;				//Handles pacman state 
 uint16_t gameTime = 60;			//Handles game time
+uint8_t gameStatus = 1; 		//0 game running 1 game paused 2 game won 3 game lost
+
 //TODO: Add big pills at random
 cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,10, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,
@@ -100,30 +102,10 @@ int main(void)
 	
   //TP_Init();
 	//TouchPanel_Calibrate();
-
-	//TODO: i can miticate this by drawing direcly the game
-	//LCD_Clear(Black);
 	
 	int _err = initGame();
-	
-	//BUG: when the game starts keep the joystick up and pacman will go trough walls
-	joystick_init();
-	init_RIT(0x00064B9A); 									//
-	enable_RIT();
-	
-	//TODO: MAke a function to initialize the hardware
-	init_timer(0,0x001312D0); 							/* a timer																						*/
-	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	Game tick timer */
-	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
-	
-	
-	enable_timer(0);
-	enable_timer(1);
-	enable_timer(2);
-	
-	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
-	LPC_SC->PCON &= ~(0x2);						
-	
+	_err = init_hardware();
+
   while (1){
 		__ASM("wfi");
   }
