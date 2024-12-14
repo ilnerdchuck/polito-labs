@@ -49,12 +49,12 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 	blank 		//10
 */
 
-uint16_t gamePoints = 0;
-uint16_t playerPoints = 0;
+uint16_t playerPoints = 0;	//Handles player pointsl
 //uint8_t playerLives = 2;
-pmState pacmanState;
-uint16_t gameTime = 60;
 
+uint16_t gamePoints = 0; 		//Handles how many white points are in the game 
+pmState pacmanState;				//Handles pacman state 
+uint16_t gameTime = 60;			//Handles game time
 //TODO: Add big pills at random
 cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,10, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,

@@ -430,7 +430,7 @@ void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t b
 * Attention		 : None
 *******************************************************************************/
 
-cellType CheckNextPos(pmDir nextDir){
+cellType GetNextCellType(pmDir nextDir){
 	uint8_t nextXpos, nextYpos;
 	
 	if(nextDir == pmUp){
@@ -473,6 +473,7 @@ void updatePacmanPos(pmDir nextDir){
 	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
 	//TODO: check if is a teleport and don't change it to blank
 	//and if teleport special update
+	
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
 	if(nextDir == pmUp){
 		--pacmanState.pmXpos;
@@ -483,6 +484,7 @@ void updatePacmanPos(pmDir nextDir){
 	}else if(nextDir == pmRight){
 		++pacmanState.pmYpos;
 	}
+	
 	//Draw pacman as needed by the orientation 		
 	GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 	pacmanState.pmCurrDir = nextDir;

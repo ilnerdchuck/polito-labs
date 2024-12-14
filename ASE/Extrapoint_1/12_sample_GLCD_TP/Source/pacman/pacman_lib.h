@@ -62,7 +62,7 @@ int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 
 //Movement functions
-cellType CheckNextPos(pmDir);
+cellType GetNextCellType(pmDir);
 void updatePacmanPos(pmDir);
 
 //Utility funcitons

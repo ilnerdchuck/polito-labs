@@ -46,7 +46,7 @@ void TIMER1_IRQHandler (void){
 	//ok to solve all issues you check nextpos: if valid u update it
 	//othewise you check next currPos if valid you move
 	//otherwise you are at a wall you draw filled pacman
-	cellType _res = CheckNextPos(pacmanState.pmNextDir); //if wall i dont do anything i go check currNext dir call
+	cellType _res = GetNextCellType(pacmanState.pmNextDir); //if wall i dont do anything i go check currNext dir call
 	//If wall uses pmCurDir as next direction
 	if(CheckIfWall(_res)){
 		//non é un muro mi sposto quindi di nuova posizione
@@ -55,7 +55,7 @@ void TIMER1_IRQHandler (void){
 		UpdateScore(_res);
 	}else{
 		//é un muro continuo con currdir
-		_res = CheckNextPos(pacmanState.pmCurrDir);
+		_res = GetNextCellType(pacmanState.pmCurrDir);
 		if(CheckIfWall(_res)){
 			//Pacman is not at a wall
 			updatePacmanPos(pacmanState.pmCurrDir);
