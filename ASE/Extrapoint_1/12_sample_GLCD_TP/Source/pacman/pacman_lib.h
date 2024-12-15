@@ -12,6 +12,7 @@
 #define TIME_YOFFSET 16
 #define TEXT_OFFSET 32
 #define CELL_DIM 8
+#define N_LARGE_DOT 6
 #define LIVES_OFFSET GAME_ROWS*CELL_DIM+TEXT_OFFSET
 
 //Types of map cell

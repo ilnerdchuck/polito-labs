@@ -1,6 +1,7 @@
 #include "pacman/pacman_lib.h"
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <time.h>
 //Templates for the pixel drawing
 uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {	0,0,0,0,0,0,0,0,
 																							0,0,0,0,0,0,0,0,
@@ -67,6 +68,7 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 * Attention		 : None
 *******************************************************************************/
 int initGame(){
+	int n_LargeDots = N_LARGE_DOT;
 	int i,j;
 	//TODO: try to inspect the LCD_init to see if i can init in all black
 	//TODO: benchmark the LCD_Drawline besides painting pixel by pixel with LCD_SetPoint
@@ -87,13 +89,16 @@ int initGame(){
 	//Score Text
 	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
 	//GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
-	DrawScore(playerPoints, White, Black);
-	
+	DrawScore(playerPoints, White, Black);	
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			//TODO:do a function to draw instead of this mess (DrawCell(cellType cell) e disegna tutto)
-			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
-				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
+			if(GameState[i][j]==smallDot){
+				if(n_LargeDots && ((1103515245*rand()+12345)%36)== 0){
+					GameState[i][j] = largeDot;
+					--n_LargeDots;
+				}
+				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);				
 				++gamePoints;
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
