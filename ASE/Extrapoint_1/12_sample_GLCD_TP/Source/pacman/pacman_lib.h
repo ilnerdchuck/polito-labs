@@ -12,6 +12,7 @@
 #define TIME_YOFFSET 16
 #define TEXT_OFFSET 32
 #define CELL_DIM 8
+#define LIVES_OFFSET GAME_ROWS*CELL_DIM+TEXT_OFFSET
 
 //Types of map cell
 typedef enum : uint8_t {
@@ -50,6 +51,7 @@ extern uint16_t gamePoints;
 extern pmState pacmanState;
 extern uint16_t gameTime;
 extern uint16_t playerPoints;
+extern uint8_t playerLives;
 extern uint8_t gameStatus;
 
 //Draw functions
@@ -62,6 +64,7 @@ void DrawFilledPacman( uint16_t, uint16_t, uint16_t, uint16_t);
 int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 void DrawMiddleText();
+void DrawLives();
 
 //Movement functions
 cellType GetNextCellType(pmDir);

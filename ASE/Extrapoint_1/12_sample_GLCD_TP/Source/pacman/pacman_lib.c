@@ -112,11 +112,10 @@ int initGame(){
 			}
 		}
 	}
+	DrawLives();
 	DrawMiddleText();
 	return 0;
-}
-															
-															
+}														
 //****************************DRAW FUNCTIONS***********************************
 /******************************************************************************
 * Function Name  : DrawTime
@@ -148,7 +147,6 @@ void DrawTime(uint16_t time, uint16_t textColor, uint16_t bkColor){
 * Attention		 : None
 *******************************************************************************/
 
-//TODO: add color input
 void DrawScore(uint16_t score, uint16_t textColor, uint16_t bkColor){
 	uint8_t i, j;
 	char scoreString[] = "00000";
@@ -164,6 +162,24 @@ void DrawScore(uint16_t score, uint16_t textColor, uint16_t bkColor){
 		sprintf(scoreString,"%d",score);
 	}
 	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET,(uint8_t*)scoreString, textColor, bkColor);
+}
+
+/******************************************************************************
+* Function Name  : DrawLives
+* Description    : Draws Time
+* Input          : time: time value to draw 
+*				   - bkColor: Background color
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+//TODO: add color input to make it sed when it is low
+void DrawLives(){
+	int i=0;
+	for(i=0; i<playerLives;++i){
+		DrawPacman(i*CELL_DIM,LIVES_OFFSET,pmLeft,Yellow, Black);	
+	}
 }
 /******************************************************************************
 * Function Name  : DrawBlank
@@ -607,21 +623,29 @@ int CheckIfWall(cellType checkWall){
 *******************************************************************************/
 
 
+
+uint16_t tmpScore = 0;
 //TODO: BUG fix if stuck it updates score by 50
 int UpdateScore(cellType cell){
 	if(cell == smallDot){
 			playerPoints += 10;
+			tmpScore += 10;
 			DrawScore(playerPoints, White, Black);
 			--gamePoints;
 	}else if(cell == largeDot){
 			playerPoints += 50;
+			tmpScore += 50;
 			DrawScore(playerPoints, White, Black);
 			--gamePoints;
 	}
 	if(!gamePoints){
 		SetGameWon();
 	}
-	//TODO: add a live if reaches 1000
+	if(tmpScore>1000){
+		++playerLives;
+		DrawLives();
+		tmpScore = 0;
+	}
 	return -1;
 }
 /******************************************************************************

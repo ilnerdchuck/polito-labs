@@ -50,7 +50,7 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 */
 
 uint16_t playerPoints = 0;	//Handles player pointsl
-//uint8_t playerLives = 2;
+uint8_t playerLives = 1;
 
 uint16_t gamePoints = 0; 		//Handles how many white points are in the game 
 pmState pacmanState;				//Handles pacman state 
