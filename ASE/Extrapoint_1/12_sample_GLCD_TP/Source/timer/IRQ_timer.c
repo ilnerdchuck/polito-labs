@@ -67,6 +67,7 @@ void TIMER1_IRQHandler (void){
 			updatePacmanPos(pmStuck);
 		}
 	}
+	//puoi inizializzare 3 randmo times e quando arrivano spawni a random col and random row un pallino grosso
   LPC_TIM1->IR = 1;			/* clear interrupt flag */
   return;
 }

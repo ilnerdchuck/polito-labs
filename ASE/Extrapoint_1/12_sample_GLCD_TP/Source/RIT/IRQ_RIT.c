@@ -41,18 +41,18 @@ void RIT_IRQHandler (void)
 	}
 	
 	
-	//
-	if(down == 1){
+	//button debounced
+	if(down != 0){
 		if(!(LPC_GPIO2->FIOPIN & (1<<10))){
-			PauseToggle();
-			//down = 0; why not this TODO
-			++down;
+			if(down==1){
+				PauseToggle();
+			}
+		}else{
+			down = 0;
+			NVIC_EnableIRQ(EINT0_IRQn);
+			LPC_PINCON->PINSEL4 |= (1<<20);
 		}
-	}else{
-		down= down+1;
-		down = 0;
-		NVIC_EnableIRQ(EINT0_IRQn);
-		LPC_PINCON->PINSEL4 |= (1<<20);
+	`	++down;
 	}
 	//i can reset the rit bot i configured in the RIT interrupt init to reset and count
 	reset_RIT();

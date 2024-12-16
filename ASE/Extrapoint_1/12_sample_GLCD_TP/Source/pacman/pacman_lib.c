@@ -1,7 +1,6 @@
 #include "pacman/pacman_lib.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 //Templates for the pixel drawing
 uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {	0,0,0,0,0,0,0,0,
 																							0,0,0,0,0,0,0,0,
@@ -85,7 +84,7 @@ int initGame(){
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
 	//GUI_Text(TIME_XOFFSET, TIME_YOFFSET, (uint8_t *) "60s", White, Black);
 	DrawTime(gameTime, White, Black);
-	
+	srand((unsigned int)&GameState);
 	//Score Text
 	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
 	//GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
@@ -93,13 +92,13 @@ int initGame(){
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			//TODO:do a function to draw instead of this mess (DrawCell(cellType cell) e disegna tutto)
-			if(GameState[i][j]==smallDot){
-				if(n_LargeDots && ((1103515245*rand()+12345)%36)== 0){
+			if(GameState[i][j] == 0){
+				if(n_LargeDots && ((1103515245*rand()+12345)%367)== 0){
 					GameState[i][j] = largeDot;
 					--n_LargeDots;
 				}
 				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);				
-				++gamePoints;
+				gamePoints += 1;
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
 								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
@@ -134,12 +133,11 @@ int initGame(){
 * Attention		 : None
 *******************************************************************************/
 
-//TODO: add color input to make it sed when it is low
 void DrawTime(uint16_t time, uint16_t textColor, uint16_t bkColor){
 	uint8_t i, j;
 	char timeString[] = "60s";
 	//TODO:fix single digit time draws ss
-	sprintf(timeString,"%ds",time);
+	sprintf(timeString,"%02ds",time);
 	//Just cicle trough the matrix and draw it
 	GUI_Text(TIME_XOFFSET, TIME_YOFFSET,(uint8_t*)timeString, textColor, bkColor);
 }
@@ -157,17 +155,7 @@ void DrawTime(uint16_t time, uint16_t textColor, uint16_t bkColor){
 void DrawScore(uint16_t score, uint16_t textColor, uint16_t bkColor){
 	uint8_t i, j;
 	char scoreString[] = "00000";
-	if(score<10){
-		sprintf(scoreString,"0000%d",score);
-	}else if(score<100){
-		sprintf(scoreString,"000%d",score);
-	}else if(score<1000){
-		sprintf(scoreString,"00%d",score);
-	}else if(score<10000){
-		sprintf(scoreString,"0%d",score);
-	}else{
-		sprintf(scoreString,"%d",score);
-	}
+	sprintf(scoreString,"%05d",score);
 	GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET,(uint8_t*)scoreString, textColor, bkColor);
 }
 
@@ -648,7 +636,7 @@ int UpdateScore(cellType cell){
 	if(!gamePoints){
 		SetGameWon();
 	}
-	if(tmpScore>1000){
+	if(tmpScore>=1000){
 		++playerLives;
 		DrawLives();
 		tmpScore = 0;
@@ -739,9 +727,9 @@ int init_hardware(){
 	joystick_init();
 	
 	init_timer(0,0x001312D0); 							/* a timer																						*/
-	init_timer(1,0x00065B9A); 						  /* 1/60Hz* 25MHz = 416666 = 0x65B9A 	Game tick timer */
+	init_timer(1,0x00196E6A); 						  /* 1/30Hz* 25MHz = 833333 = 0x65B9A 	Game tick timer */
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
-	init_RIT(0x00064B9A);
+	init_RIT(0x004C4B40);
 	enable_RIT();
 
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
