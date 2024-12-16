@@ -65,6 +65,13 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 * Output         : None
 * Return         : 0 on success, -1 otherwise
 * Attention		 : None
+																							 
+																							 if(n_LargeDots && ((1103515245*rand()+12345)%367)== 0){
+					tmp = largeDot;
+					GameState[i][j] = largeDot;
+					
+					--n_LargeDots;
+				}
 *******************************************************************************/
 int initGame(){
 	int n_LargeDots = N_LARGE_DOT;
@@ -80,7 +87,6 @@ int initGame(){
 		LCD_DrawLine(0,i,MAX_X,i,Black);
 	}
 	//Game time text
-	
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
 	//GUI_Text(TIME_XOFFSET, TIME_YOFFSET, (uint8_t *) "60s", White, Black);
 	DrawTime(gameTime, White, Black);
@@ -92,13 +98,9 @@ int initGame(){
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			//TODO:do a function to draw instead of this mess (DrawCell(cellType cell) e disegna tutto)
-			if(GameState[i][j] == 0){
-				if(n_LargeDots && ((1103515245*rand()+12345)%367)== 0){
-					GameState[i][j] = largeDot;
-					--n_LargeDots;
-				}
+			if(GameState[i][j] == smallDot){
+				gamePoints++;
 				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);				
-				gamePoints += 1;
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
 								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
@@ -545,6 +547,7 @@ void updatePacmanPos(pmDir nextDir){
 		pacmanState.pmCurrDir = pmStuck;
 		return;
 	}
+	
 	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
 	//TODO: check if is a teleport and don't change it to blank
 	//and if teleport special update
@@ -562,7 +565,7 @@ void updatePacmanPos(pmDir nextDir){
 		}else if(nextDir == pmRight){
 			++pacmanState.pmYpos;
 		}
-
+		UpdateScore(GameState[pacmanState.pmXpos][pacmanState.pmYpos]);
 		//Draw pacman as needed by the orientation 		
 		if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] != teleport){
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;

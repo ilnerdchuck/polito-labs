@@ -55,7 +55,6 @@ void TIMER1_IRQHandler (void){
 	if(CheckIfWall(_res)){
 		//non é un muro mi sposto quindi di nuova posizione
 		updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
-		UpdateScore(_res);
 	}else if(pacmanState.pmCurrDir != pmStuck){
 		//é un muro continuo con currdir
 		_res = GetNextCellType(pacmanState.pmCurrDir);
