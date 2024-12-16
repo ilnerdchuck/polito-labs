@@ -52,7 +52,7 @@ void RIT_IRQHandler (void)
 			NVIC_EnableIRQ(EINT0_IRQn);
 			LPC_PINCON->PINSEL4 |= (1<<20);
 		}
-	`	++down;
+		++down;
 	}
 	//i can reset the rit bot i configured in the RIT interrupt init to reset and count
 	reset_RIT();
