@@ -56,7 +56,7 @@ uint16_t gamePoints = 0; 		//Handles how many white points are in the game
 pmState pacmanState;				//Handles pacman state 
 uint16_t gameTime = 60;			//Handles game time
 uint8_t gameStatus = 1; 		//0 game running 1 game paused 2 game won 3 game lost
-
+uint8_t  largeDotRemaining = N_LARGE_DOT;
 //TODO: Add big pills at random
 cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,10, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,

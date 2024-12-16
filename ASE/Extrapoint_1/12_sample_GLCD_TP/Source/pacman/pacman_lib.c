@@ -74,7 +74,6 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 				}
 *******************************************************************************/
 int initGame(){
-	int n_LargeDots = N_LARGE_DOT;
 	int i,j;
 	//TODO: try to inspect the LCD_init to see if i can init in all black
 	//TODO: benchmark the LCD_Drawline besides painting pixel by pixel with LCD_SetPoint
@@ -88,12 +87,9 @@ int initGame(){
 	}
 	//Game time text
 	GUI_Text(20, 0, (uint8_t *) "GAME TIME", White, Black);
-	//GUI_Text(TIME_XOFFSET, TIME_YOFFSET, (uint8_t *) "60s", White, Black);
 	DrawTime(gameTime, White, Black);
-	srand((unsigned int)&GameState);
 	//Score Text
 	GUI_Text(SCORE_XOFFSET, 0, (uint8_t *) "SCORE", White, Black);
-	//GUI_Text(SCORE_XOFFSET, SCORE_YOFFSET, (uint8_t *) "00000", White, Black);
 	DrawScore(playerPoints, White, Black);	
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
@@ -121,9 +117,7 @@ int initGame(){
 	DrawLives();
 	DrawMiddleText();
 	return 0;
-}														
-
-
+}
 //****************************DRAW FUNCTIONS***********************************
 /******************************************************************************
 * Function Name  : DrawTime
@@ -734,11 +728,65 @@ int init_hardware(){
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
 	init_RIT(0x004C4B40);
 	enable_RIT();
-
+	
 	LPC_SC->PCON |= 0x1;									/* power-down	mode										*/
 	LPC_SC->PCON &= ~(0x2);		
+	srand(6969423);
 	return 0;
 }
+/******************************************************************************
+* Function Name  : getRandomDecision
+* Description    : Initialize hardware needed
+* Input          : None
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+int getRandomDecision(){
+    int buff[RANDOM_BUFFER] = {0};  
+		int i,j;
+    for (i=0; i < RANDOM_BUFFER; ++i) {
+        buff[i] = rand()%2;  
+		}
+    // Generate a new random decision by mixing the history values
+    int decision = 0;
+    for (i=1; i<=RANDOM_BUFFER; ++i) {
+        decision ^= buff[i*rand()%RANDOM_BUFFER-1];  // XOR the values together
+    }
+		
+	return decision;
+}
+
+/******************************************************************************
+* Function Name  : SpawnLargeDot
+* Description    : Initialize hardware needed
+* Input          : None
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void SpawnLargeDot(){
+		uint16_t i,j;
+		int generating =1;
+		while(generating){
+			i=rand()*pacmanState.pmXpos;
+			j=rand()*pacmanState.pmYpos;
+			//TODO: a quanto pare % non funziona 
+			i=i-((i/(GAME_ROWS-1))*(GAME_ROWS-1));
+			j=j-((j/(GAME_COLUMNS-1))*(GAME_COLUMNS-1));
+			
+			
+			if(GameState[i][j]==smallDot){
+				GameState[i][j]=largeDot;
+				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
+				generating =0;
+				--largeDotRemaining;
+			}
+		}
+}
+
 //************************END UTILITY FUNCTIONS*******************************
 
 

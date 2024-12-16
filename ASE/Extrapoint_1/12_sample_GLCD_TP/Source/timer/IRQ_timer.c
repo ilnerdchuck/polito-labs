@@ -86,7 +86,10 @@ void TIMER2_IRQHandler (void){
 	if(!gameTime){
 		SetGameOver();
 	}
-  LPC_TIM2->IR = 1;			/* clear interrupt flag */
+	if(getRandomDecision() && pacmanState.pmCurrDir!=pmStuck && largeDotRemaining){
+		SpawnLargeDot();
+	}
+	LPC_TIM2->IR = 1;			/* clear interrupt flag */
   return;
 }
 /******************************************************************************

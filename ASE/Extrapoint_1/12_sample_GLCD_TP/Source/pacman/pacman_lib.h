@@ -1,4 +1,5 @@
 #pragma once
+ 
 #include <stdint.h>
 #include "GLCD/GLCD.h" 
 
@@ -13,6 +14,7 @@
 #define TEXT_OFFSET 32
 #define CELL_DIM 8
 #define N_LARGE_DOT 6
+#define RANDOM_BUFFER 5
 #define LIVES_OFFSET GAME_ROWS*CELL_DIM+TEXT_OFFSET
 
 //Types of map cell
@@ -54,6 +56,7 @@ extern uint16_t gameTime;
 extern uint16_t playerPoints;
 extern uint8_t playerLives;
 extern uint8_t gameStatus;
+extern uint8_t largeDotRemaining;
 
 //Draw functions
 int initGame();
@@ -67,6 +70,8 @@ int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 void DrawMiddleText();
 void DrawLives();
 
+
+
 //Movement functions
 cellType GetNextCellType(pmDir);
 void updatePacmanPos(pmDir);
@@ -78,7 +83,5 @@ int UpdateScore(cellType);
 void SetGameWon();
 void SetGameOver();
 void PauseToggle();
-
-
-
-
+void SpawnLargeDot();
+int getRandomDecision();
