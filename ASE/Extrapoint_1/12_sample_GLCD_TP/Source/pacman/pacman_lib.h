@@ -46,6 +46,10 @@ typedef struct{
 	uint8_t pmYpos;		 	//Current Y position
 	pmDir   pmCurrDir; 	//Current Direction
 	pmDir   pmNextDir; 	//Next requested Direction
+	//EXTRA for animation
+	uint8_t aFrame;
+	uint8_t pmOldXpos;			//Current X position
+	uint8_t pmOldYpos;		 	//Current Y position
 }pmState;
 
 //Everyone can check the Game State with the matrix
@@ -69,8 +73,7 @@ int DrawPoint( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 int DrawWall( uint16_t, uint16_t, cellType, uint16_t, uint16_t);
 void DrawMiddleText();
 void DrawLives();
-
-
+void animateFrame();
 
 //Movement functions
 cellType GetNextCellType(pmDir);
