@@ -507,7 +507,7 @@ void animateFrame(){
 	//For now we dont handle deleting back pixels
 	//make a funciton to clear only the back of pacman
 	DrawBlank(pacmanState.pmOldYpos*CELL_DIM, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
-	uint8_t Xpos, Ypos;
+	uint16_t Xpos, Ypos;
 	++pacmanState.aFrame;
 	//i need to handle animation in the teleport also
 		if(dir == pmUp){
@@ -520,8 +520,8 @@ void animateFrame(){
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame;
 		}else if(dir == pmRight){
-			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
-			Ypos = pacmanState.pmOldYpos*CELL_DIM+pacmanState.aFrame;
+			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
+			Ypos = (pacmanState.pmOldYpos*CELL_DIM)+pacmanState.aFrame;
 		}
 		if(pacmanState.aFrame == 1 || pacmanState.aFrame == 3 || pacmanState.aFrame == 6){
 			DrawFilledPacman(Ypos, Xpos, Yellow,Black);
