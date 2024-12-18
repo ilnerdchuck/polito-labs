@@ -57,6 +57,7 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 																							 0,1,1,1,1,1,1,0,
 																							 0,0,1,1,1,1,0,0};
 
+																							 
 //TODO: maybe all draw functions add automatically CELL_DIM and TEXT OFFSET
 /******************************************************************************
 * Function Name  : initGame
@@ -109,8 +110,11 @@ int initGame(){
 				DrawPacman(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Yellow,Black);
 				pacmanState.pmXpos = i;
 				pacmanState.pmYpos = j;
+				pacmanState.pmOldXpos = i;
+				pacmanState.pmOldYpos = j;
 				pacmanState.pmCurrDir = pmLeft;
 				pacmanState.pmNextDir = pmLeft;
+				pacmanState.aFrame = 8;
 			}
 		}
 	}
@@ -399,6 +403,7 @@ void DrawPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_
 	}
 }
 
+
 /******************************************************************************
 * Function Name  : DrawFilledPacman
 * Description    : Draws a chonky PAC-MAN
@@ -482,6 +487,54 @@ void DrawMiddleText(){
 	
 	return;
 }
+/******************************************************************************
+* Function Name  : updatePacmanPos
+* Description    : Updates PAC-MAN position
+* Input          : NextDir
+* Output         : None
+* Return         : None
+* Attention		 	 : None
+*******************************************************************************/
+
+//the idea is that everything that moves has 8 keyframes i draw only the necessary 
+//pixels to update less things possible
+
+//V1.0 no key frames i delete the old update the new
+void animateFrame(){
+	
+	//i take the pacman dir 
+	pmDir dir = pacmanState.pmCurrDir;
+
+	//For now we dont handle deleting back pixels
+	//make a funciton to clear only the back of pacman
+	DrawBlank(pacmanState.pmOldYpos*CELL_DIM, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
+	uint16_t Xpos, Ypos;
+	++pacmanState.aFrame;
+	//i need to handle animation in the teleport also
+		if(dir == pmUp){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET-pacmanState.aFrame,Black);
+			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET-pacmanState.aFrame;
+			Ypos = pacmanState.pmOldYpos*CELL_DIM;
+		}else if(dir== pmDown){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET+pacmanState.aFrame,Black);
+			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+pacmanState.aFrame;
+			Ypos = pacmanState.pmOldYpos*CELL_DIM;
+		}else if(dir == pmLeft){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
+			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
+			Ypos = pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame;
+		}else if(dir == pmRight){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM+pacmanState.aFrame, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
+			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
+			Ypos = (pacmanState.pmOldYpos*CELL_DIM)+pacmanState.aFrame;
+		}
+		if(pacmanState.aFrame == 1 ||pacmanState.aFrame == 2 || pacmanState.aFrame == 3 || pacmanState.aFrame == 4 ||pacmanState.aFrame == 7){
+			DrawFilledPacman(Ypos, Xpos, Yellow,Black);
+		}else{
+			DrawPacman(Ypos,Xpos,dir,Yellow, Black);
+		}
+		
+}
 
 //**************************END DRAW FUNCTIONS*********************************
 //**************************POSITION FUNCTIONS*********************************
@@ -531,18 +584,19 @@ cellType GetNextCellType(pmDir nextDir){
 //the idea is that everything that moves has 8 keyframes i draw only the necessary 
 //pixels to update less things possible
 
-//V1.0 no key frames i delete the old update the new
 void updatePacmanPos(pmDir nextDir){
 	//
 	uint8_t i, j;
-	uint8_t i_r, j_r;
+	pacmanState.pmOldXpos = pacmanState.pmXpos;
+	pacmanState.pmOldYpos = pacmanState.pmYpos;
+	
 	if(nextDir == pmStuck){
 		DrawFilledPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET, Yellow, Black);
 		pacmanState.pmCurrDir = pmStuck;
 		return;
 	}
-	
-	DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
+	//non serve pulire ci pensa la animateFrame
+	//DrawBlank(pacmanState.pmYpos*CELL_DIM, pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,Black);
 	//TODO: check if is a teleport and don't change it to blank
 	//and if teleport special update
 	//Ok i could not change any state of the cell if i am currently in a tp cell
@@ -560,7 +614,7 @@ void updatePacmanPos(pmDir nextDir){
 			++pacmanState.pmYpos;
 		}
 		UpdateScore(GameState[pacmanState.pmXpos][pacmanState.pmYpos]);
-		//Draw pacman as needed by the orientation 		
+		//dont alter the tp cell
 		if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] != teleport){
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 		}
@@ -576,12 +630,16 @@ void updatePacmanPos(pmDir nextDir){
 			}else if(nextDir == pmRight){
 				++pacmanState.pmYpos;
 			}	
+			//TODO: Why i do this? se sono in un teleport non devo farlo
+			// ah ok uscendo la prossima posizione 'e pacman
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 		}
 	}
 	pacmanState.pmCurrDir = nextDir;
-	DrawPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET,pacmanState.pmCurrDir,Yellow, Black);
+	pacmanState.aFrame = 0;
 }
+
+
 //***********************END POSITION FUNCTIONS*******************************
 //**************************UTILITY FUNCTIONS*********************************
 
@@ -617,7 +675,6 @@ int CheckIfWall(cellType checkWall){
 
 
 uint16_t tmpScore = 0;
-//TODO: BUG fix if stuck it updates score by 50
 int UpdateScore(cellType cell){
 	if(cell == smallDot){
 			playerPoints += 10;
@@ -724,7 +781,7 @@ int init_hardware(){
 	joystick_init();
 	
 	init_timer(0,0x001312D0); 							/* a timer																						*/
-	init_timer(1,0x00196E6A); 						  /* 1/30Hz* 25MHz = 833333 = 0x65B9A 	Game tick timer */
+	init_timer(1,0x00051615); 						  /* 1/30Hz* 25MHz = 833333 = 0x65B9A 	Game tick timer */
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
 	init_RIT(0x004C4B40);
 	enable_RIT();

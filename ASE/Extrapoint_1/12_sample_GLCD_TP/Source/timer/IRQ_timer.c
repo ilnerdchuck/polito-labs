@@ -43,10 +43,21 @@ void TIMER0_IRQHandler (void){
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
 	if(gameStatus != 0 || pacmanState.pmNextDir == pmStuck){
-		//the game is not running i dont have to update (error handling)
 		LPC_TIM1->IR = 1;	
 		return;
 	}
+	
+	//i can use an integer of 8 values(1-8) draw the animation
+	//i can place it in the pacmanstatus
+	if(pacmanState.aFrame<8){
+		//update frame and skiddaddle
+		//maybe the animateframe can take an entity and draw it 
+		//regardless if it is pacman or a fantasmino
+		animateFrame();
+		LPC_TIM1->IR = 1;	
+		return;
+	}
+	
 	//ok to solve all issues you check nextpos: if valid u update it
 	//othewise you check next currPos if valid you move
 	//otherwise you are at a wall you draw filled pacman
