@@ -57,6 +57,7 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 																							 0,1,1,1,1,1,1,0,
 																							 0,0,1,1,1,1,0,0};
 
+																							 
 //TODO: maybe all draw functions add automatically CELL_DIM and TEXT OFFSET
 /******************************************************************************
 * Function Name  : initGame
@@ -402,6 +403,7 @@ void DrawPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_
 	}
 }
 
+
 /******************************************************************************
 * Function Name  : DrawFilledPacman
 * Description    : Draws a chonky PAC-MAN
@@ -500,7 +502,6 @@ void DrawMiddleText(){
 //V1.0 no key frames i delete the old update the new
 void animateFrame(){
 	
-	
 	//i take the pacman dir 
 	pmDir dir = pacmanState.pmCurrDir;
 
@@ -511,19 +512,23 @@ void animateFrame(){
 	++pacmanState.aFrame;
 	//i need to handle animation in the teleport also
 		if(dir == pmUp){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET-pacmanState.aFrame,Black);
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET-pacmanState.aFrame;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM;
 		}else if(dir== pmDown){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET+pacmanState.aFrame,Black);
 			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+pacmanState.aFrame;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM;
 		}else if(dir == pmLeft){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame;
 		}else if(dir == pmRight){
+			//DrawBlank(pacmanState.pmOldYpos*CELL_DIM+pacmanState.aFrame, pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
 			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
 			Ypos = (pacmanState.pmOldYpos*CELL_DIM)+pacmanState.aFrame;
 		}
-		if(pacmanState.aFrame == 1 || pacmanState.aFrame == 3 || pacmanState.aFrame == 6){
+		if(pacmanState.aFrame == 1 ||pacmanState.aFrame == 2 || pacmanState.aFrame == 3 || pacmanState.aFrame == 4 ||pacmanState.aFrame == 7){
 			DrawFilledPacman(Ypos, Xpos, Yellow,Black);
 		}else{
 			DrawPacman(Ypos,Xpos,dir,Yellow, Black);
@@ -670,7 +675,6 @@ int CheckIfWall(cellType checkWall){
 
 
 uint16_t tmpScore = 0;
-//TODO: BUG fix if stuck it updates score by 50
 int UpdateScore(cellType cell){
 	if(cell == smallDot){
 			playerPoints += 10;
