@@ -439,24 +439,26 @@ void DrawMiddleText(){
 	//3 tipes of string based on gamestate
 	//Pause clean and write the pause string
 	if(gameStatus == 1){
-		GUI_Text(12*CELL_DIM,16*CELL_DIM+TEXT_OFFSET,(uint8_t*)"PAUSE",Yellow,Black);
+		GUI_Text(12*CELL_DIM,11*CELL_DIM+TEXT_OFFSET,(uint8_t*)"PAUSE",Yellow,Black);
 		return;
 	}
 	//Game Won
 	if(gameStatus == 2){
-		GUI_Text(10*CELL_DIM,16*CELL_DIM+TEXT_OFFSET,(uint8_t*)"!VICTORY!",Yellow,Black);
+		GUI_Text(10*CELL_DIM,11*CELL_DIM+TEXT_OFFSET,(uint8_t*)"!VICTORY!",Yellow,Black);
 		return;
 	}
 	//Game Over
 	if(gameStatus == 3){
-		GUI_Text(12*CELL_DIM+4,16*CELL_DIM+TEXT_OFFSET,(uint8_t*)"GAME",Yellow,Black);
-		GUI_Text(12*CELL_DIM+4,18*CELL_DIM+TEXT_OFFSET,(uint8_t*)"OVER",Yellow,Black);
+		GUI_Text(12*CELL_DIM+4,11*CELL_DIM+TEXT_OFFSET,(uint8_t*)"GAME",Yellow,Black);
+		GUI_Text(12*CELL_DIM+4,13*CELL_DIM+TEXT_OFFSET,(uint8_t*)"OVER",Yellow,Black);
 		return;
 	}
 	
 	uint8_t i,j;
-	for(i=16; i<=20; ++i){
-		for(j=10;j<=19; ++j){
+	//for(i=16; i<=20; ++i){
+	//	for(j=10;j<=19; ++j){
+	for(i=10; i<=12; ++i){
+		for(j=10;j<=16; ++j){
 			//TODO:do a function to draw instead of this mess 
 			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
 				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
