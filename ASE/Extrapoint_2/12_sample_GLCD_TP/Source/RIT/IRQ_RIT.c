@@ -9,6 +9,7 @@
 *********************************************************************************************************/
 #include "LPC17xx.h"
 #include "RIT.h"
+#include "../timer/timer.h"
 #include "pacman/pacman_lib.h"
 
 /******************************************************************************
@@ -20,6 +21,20 @@
 ** Returned value:		None
 **
 ******************************************************************************/
+// beat 1/4 = 1.65/4 seconds
+#define RIT_SEMIMINIMA 8
+#define RIT_MINIMA 16
+#define RIT_INTERA 32
+
+#define UPTICKS 1
+
+NOTE eat[] = 
+{
+    {e4, time_croma},  // E4, 1/16
+		{pause, time_croma},  // Pause, 1/16
+    {b3, time_croma},  // B3, 1/16
+};
+
 int down = 0;
 void RIT_IRQHandler (void)
 {		
@@ -53,7 +68,28 @@ void RIT_IRQHandler (void)
 			LPC_PINCON->PINSEL4 |= (1<<20);
 		}
 	}
+	// TODO fix speaker
 	//i can reset the rit bot i configured in the RIT interrupt init to reset and count
+	static int currentNote = 0;
+	static int ticks = 0;
+	
+	if(playEat== 1){
+		if(!isNotePlaying())
+		{
+			++ticks;
+			if(ticks == UPTICKS)
+			{
+				ticks = 0;
+				playNote(eat[currentNote++]);
+			}
+			if(currentNote == 3)
+			{
+				currentNote = 0;
+				playEat =0;
+			}
+		}
+	}
+	
 	reset_RIT();
   LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
   return;

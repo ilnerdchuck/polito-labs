@@ -16,6 +16,14 @@
 #include "RIT/RIT.h"
 #include <stdio.h> 
 
+uint16_t SinTable[45] =                                       /* ?????                       */
+{
+    410, 467, 523, 576, 627, 673, 714, 749, 778,
+    799, 813, 819, 817, 807, 789, 764, 732, 694, 
+    650, 602, 550, 495, 438, 381, 324, 270, 217,
+    169, 125, 87 , 55 , 30 , 12 , 2  , 0  , 6  ,   
+    20 , 41 , 70 , 105, 146, 193, 243, 297, 353
+};
 /******************************************************************************
 ** Function name:		Timer0_IRQHandler
 **
@@ -27,8 +35,21 @@
 ******************************************************************************/
 
 void TIMER0_IRQHandler (void){
-  LPC_TIM0->IR = 1;			/* clear interrupt flag */
-  return;
+	
+	static int sineticks=0;
+	/* DAC management */	
+	static int currentValue; 
+	currentValue = SinTable[sineticks];
+	//is this the volume?
+	currentValue -= 410;
+	currentValue /= 1;
+	currentValue += 410;
+	LPC_DAC->DACR = currentValue <<4; //volume
+	sineticks++;
+	if(sineticks==45) sineticks=0;
+	
+	LPC_TIM0->IR = 1;			/* clear interrupt flag */
+	return;
 }
 
 
@@ -64,10 +85,10 @@ void TIMER1_IRQHandler (void){
 	cellType _res = GetNextCellType(pacmanState.pmNextDir); //if wall i dont do anything i go check currNext dir call
 	//If wall uses pmCurDir as next direction
 	if(CheckIfWall(_res)){
-		//non é un muro mi sposto quindi di nuova posizione
+		//non ï¿½ un muro mi sposto quindi di nuova posizione
 		updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
 	}else if(pacmanState.pmCurrDir != pmStuck){
-		//é un muro continuo con currdir
+		//ï¿½ un muro continuo con currdir
 		_res = GetNextCellType(pacmanState.pmCurrDir);
 		if(CheckIfWall(_res)){
 			//Pacman is not at a wall
@@ -104,6 +125,20 @@ void TIMER2_IRQHandler (void){
 		SpawnLargeDot();
 	}
 	LPC_TIM2->IR = 1;			/* clear interrupt flag */
+  return;
+}
+/******************************************************************************
+** Function name:		Timer2_IRQHandler
+**
+** Descriptions:		Timer/Counter 2 interrupt handler
+**
+** parameters:			None
+** Returned value:		None
+**
+******************************************************************************/
+void TIMER3_IRQHandler (void){
+	disable_timer(0);
+	LPC_TIM3->IR = 1;			/* clear interrupt flag */
   return;
 }
 /******************************************************************************

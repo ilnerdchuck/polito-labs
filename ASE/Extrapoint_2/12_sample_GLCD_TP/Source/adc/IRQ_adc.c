@@ -9,9 +9,7 @@
 *********************************************************************************************************/
 
 #include "LPC17xx.h"
-#include "adc.h"
-#include "../led/led.h"
-#include "../timer/timer.h"
+#include "pacman/pacman_lib.h"
 
 /*----------------------------------------------------------------------------
   A/D IRQ: Executed when A/D Conversion is ready (signal from ADC peripheral)
@@ -55,7 +53,8 @@ void ADC_IRQHandler(void) {
 		reset_timer(0);
 		init_timer(0,freqs[AD_current*7/0xFFF]);
 		enable_timer(0);
+		
 		AD_last = AD_current;
   }
 	
-} 
+}

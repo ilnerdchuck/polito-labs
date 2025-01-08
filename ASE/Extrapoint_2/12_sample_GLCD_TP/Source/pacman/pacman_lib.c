@@ -66,13 +66,6 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 * Output         : None
 * Return         : 0 on success, -1 otherwise
 * Attention		 : None
-																							 
-																							 if(n_LargeDots && ((1103515245*rand()+12345)%367)== 0){
-					tmp = largeDot;
-					GameState[i][j] = largeDot;
-					
-					--n_LargeDots;
-				}
 *******************************************************************************/
 int initGame(){
 	int i,j;
@@ -679,11 +672,13 @@ int UpdateScore(cellType cell){
 			tmpScore += 10;
 			//DrawScore(playerPoints, White, Black);
 			--gamePoints;
+			playEat =1;
 	}else if(cell == largeDot){
 			playerPoints += 50;
 			tmpScore += 50;
 			//DrawScore(playerPoints, White, Black);
 			--gamePoints;
+			playEat =1;
 	}
 	if(!gamePoints){
 		SetGameWon();
@@ -714,10 +709,11 @@ void PauseToggle(){
 		enable_timer(1);
 		enable_timer(2);
 	}else if(gameStatus == 0){
-		disable_timer(0);
 		disable_timer(1);
 		disable_timer(2);
 		gameStatus = 1;
+		disable_timer(0);
+		disable_timer(3);
 	}
 	DrawMiddleText();
 	return;
@@ -737,7 +733,7 @@ void PauseToggle(){
 void SetGameOver(){
 	//per pausare disablito tutti i timer ez
 	gameStatus = 3;
-	disable_timer(0);
+	//disable_timer(0);
 	disable_timer(1);
 	disable_timer(2);
 	disable_RIT();
@@ -759,7 +755,7 @@ void SetGameOver(){
 void SetGameWon(){
 	//per pausare disablito tutti i timer ez
 	gameStatus = 2;
-	disable_timer(0);
+	//disable_timer(0);
 	disable_timer(1);
 	disable_timer(2);
 	disable_RIT();
@@ -779,7 +775,7 @@ int init_hardware(){
 	BUTTON_init();
 	joystick_init();
 	
-	init_timer(0,0x001312D0); 							/* a timer																						*/
+	//init_timer(0,0x001312D0); 							/* a timer																						*/
 	init_timer(1,0x00051615); 						  /* 1/30Hz* 25MHz = 833333 = 0x65B9A 	Game tick timer */
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
 	init_RIT(0x004C4B40);

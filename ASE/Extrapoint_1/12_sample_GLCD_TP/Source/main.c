@@ -57,7 +57,6 @@ pmState pacmanState;				//Handles pacman state
 uint16_t gameTime = 60;			//Handles game time
 uint8_t gameStatus = 1; 		//0 game running 1 game paused 2 game won 3 game lost
 uint8_t  largeDotRemaining = N_LARGE_DOT;
-//TODO: Add big pills at random
 cellType GameState[GAME_ROWS][GAME_COLUMNS]={
  4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,10, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 5,
  2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,10, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
@@ -97,13 +96,12 @@ cellType GameState[GAME_ROWS][GAME_COLUMNS]={
 
 int main(void)
 {
-	SystemInit();  												/* System Initialization (i.e., PLL)  */
+	SystemInit();  											
   LCD_Initialization();
 	
-  //TP_Init();
-	//TouchPanel_Calibrate();
-	
+	//Game init & display init
 	int _err = initGame();
+	//Init required hardware for the game
 	_err = init_hardware();
 
   while (1){

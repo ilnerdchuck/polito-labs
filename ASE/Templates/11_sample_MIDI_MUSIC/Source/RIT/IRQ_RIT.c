@@ -27,8 +27,6 @@
 #define RIT_INTERA 32
 
 #define UPTICKS 1
-
-
 //SHORTENING UNDERTALE: TOO MANY REPETITIONS
 NOTE song[] = 
 {
@@ -100,11 +98,6 @@ void RIT_IRQHandler (void)
 			ticks = 0;
 			playNote(song[currentNote++]);
 		}
-	}
-	
-	if(currentNote == (sizeof(song) / sizeof(song[0])))
-	{
-		disable_RIT();
 	}
   LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
 }
