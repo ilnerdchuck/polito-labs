@@ -11,13 +11,13 @@
 
 //I splitted the gameboard in 8x8 pixel cells, all entities 
 //and behaviour are within this drawing constraints.
-#define GAME_ROWS 34
+#define GAME_ROWS 26
 #define GAME_COLUMNS 30
 #define SCORE_XOFFSET 180
 #define SCORE_YOFFSET 16
 #define TIME_XOFFSET 42
 #define TIME_YOFFSET 16
-#define TEXT_OFFSET 32
+#define TEXT_OFFSET 64
 #define CELL_DIM 8
 #define N_LARGE_DOT 6
 #define RANDOM_BUFFER 5
