@@ -3,6 +3,12 @@
 #include <stdint.h>
 #include "GLCD/GLCD.h" 
 #include "CAN/CAN.h"
+#include "../music/music.h"
+#include "joystick/joystick.h"
+#include "RIT/RIT.h"
+#include "adc/adc.h"
+#include "button_EXINT/button.h"
+
 //I splitted the gameboard in 8x8 pixel cells, all entities 
 //and behaviour are within this drawing constraints.
 #define GAME_ROWS 34
@@ -61,7 +67,7 @@ extern uint16_t playerPoints;
 extern uint8_t playerLives;
 extern uint8_t gameStatus;
 extern uint8_t largeDotRemaining;
-
+extern uint8_t playEat;
 
 //Draw functions
 int initGame();

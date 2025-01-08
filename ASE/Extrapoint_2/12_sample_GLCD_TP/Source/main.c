@@ -25,9 +25,6 @@
 //#include "TouchPanel/TouchPanel.h"
 #include "timer/timer.h"
 #include "pacman/pacman_lib.h"
-#include "joystick/joystick.h"
-#include "RIT/RIT.h"
-#include "button_EXINT/button.h"
 
 #ifdef SIMULATOR
 extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emulator to find the symbol (can be placed also inside system_LPC17xx.h but since it is RO, it needs more work)
@@ -51,7 +48,7 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 
 uint16_t playerPoints = 0;	//Handles player pointsl
 uint8_t playerLives = 1;
-
+uint8_t playEat = 0;
 uint16_t gamePoints = 0; 		//Handles how many white points are in the game 
 pmState pacmanState;				//Handles pacman state 
 uint8_t gameTime = 60;			//Handles game time
@@ -101,11 +98,17 @@ int main(void)
   LCD_Initialization();
 	
 	CAN_Init();
-
+	
+	//ADC_init();
 	int _err = initGame();
 	_err = init_hardware();
-
-  while (1){
+	
+	//ADC things
+	LPC_PINCON->PINSEL1 |= (1<<21);
+	LPC_PINCON->PINSEL1 &= ~(1<<20);
+	LPC_GPIO0->FIODIR |= (1<<26);
+  
+	while (1){
 		__ASM("wfi");
   }
 }

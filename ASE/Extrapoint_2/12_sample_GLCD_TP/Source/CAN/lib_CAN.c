@@ -84,16 +84,17 @@ void CAN_setup (uint32_t ctrl)  {
     LPC_SC->PCONP       |=  (1 << 13);           /* Enable power to CAN1 block */
     LPC_PINCON->PINSEL0 |=  (1 <<  0);           /* Pin P0.0 used as RD1 (CAN1) */
     LPC_PINCON->PINSEL0 |=  (1 <<  2);           /* Pin P0.1 used as TD1 (CAN1) */
-    
+    NVIC_EnableIRQ(CAN_IRQn);
+	  NVIC_SetPriority(CAN_IRQn, 4);
                         /* Enable CAN interrupt */
   } else {
     LPC_SC->PCONP       |=  (1 << 14);           /* Enable power to CAN2 block */
     LPC_PINCON->PINSEL0 |=  (1 <<  9);           /* Pin P0.4 used as RD2 (CAN2) */
     LPC_PINCON->PINSEL0 |=  (1 << 11);           /* Pin P0.5 used as TD2 (CAN2) */
+    NVIC_EnableIRQ(CAN_IRQn);
+	  NVIC_SetPriority(CAN_IRQn, 4);      // TODO: why the template does it here? mhh i could do it after with some
+                                        //  error checking before
   }
-	
-	NVIC_EnableIRQ(CAN_IRQn);
-	NVIC_SetPriority(CAN_IRQn, 2);
 	
   LPC_CANAF->AFMR = 2;                           /* By default filter is not used */
   pCAN->MOD   = 1;                               /* Enter reset mode */

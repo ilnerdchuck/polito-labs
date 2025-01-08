@@ -20,7 +20,7 @@
 **
 ******************************************************************************/
 
-uint16_t SinTable[45] =                                       /* ÕýÏÒ±í                       */
+uint16_t SinTable[45] =                                       /* ï¿½ï¿½ï¿½Ò±ï¿½                       */
 {
     410, 467, 523, 576, 627, 673, 714, 749, 778,
     799, 813, 819, 817, 807, 789, 764, 732, 694, 
@@ -31,20 +31,18 @@ uint16_t SinTable[45] =                                       /* ÕýÏÒ±í         
 
 void TIMER0_IRQHandler (void)
 {
-	static int sineticks=0;
-	/* DAC management */	
-	static int currentValue; 
-	currentValue = SinTable[sineticks];
-	currentValue -= 410;
-	currentValue /= 1;
-	currentValue += 410;
-	LPC_DAC->DACR = currentValue <<6;
-	sineticks++;
-	if(sineticks==45) sineticks=0;
-
-	
-  LPC_TIM0->IR = 1;			/* clear interrupt flag */
-  return;
+		static int sineticks=0;
+		/* DAC management */	
+		static int currentValue; 
+		currentValue = SinTable[sineticks];
+		currentValue -= 410;
+		currentValue /= 1;
+		currentValue += 410;
+		LPC_DAC->DACR = currentValue <<5;
+		sineticks++;
+		if(sineticks==45) sineticks=0;
+  	LPC_TIM0->IR = 1;			/* clear interrupt flag */
+  	return;
 }
 
 

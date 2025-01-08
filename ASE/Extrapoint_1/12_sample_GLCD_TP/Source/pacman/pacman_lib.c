@@ -58,7 +58,6 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 																							 0,0,1,1,1,1,0,0};
 
 																							 
-//TODO: maybe all draw functions add automatically CELL_DIM and TEXT OFFSET
 /******************************************************************************
 * Function Name  : initGame
 * Description    : initialize the game
@@ -66,17 +65,9 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 * Output         : None
 * Return         : 0 on success, -1 otherwise
 * Attention		 : None
-																							 
-																							 if(n_LargeDots && ((1103515245*rand()+12345)%367)== 0){
-					tmp = largeDot;
-					GameState[i][j] = largeDot;
-					
-					--n_LargeDots;
-				}
 *******************************************************************************/
 int initGame(){
 	int i,j;
-	//TODO: try to inspect the LCD_init to see if i can init in all black
 	//TODO: benchmark the LCD_Drawline besides painting pixel by pixel with LCD_SetPoint
 	//init game text zone and bottom zone
 	for(i=0;i<TEXT_OFFSET;++i){
@@ -122,7 +113,10 @@ int initGame(){
 	DrawMiddleText();
 	return 0;
 }
-//****************************DRAW FUNCTIONS***********************************
+//*****************************************************************************
+//----------------------------DRAW FUNCTIONS-----------------------------------
+//*****************************************************************************
+
 /******************************************************************************
 * Function Name  : DrawTime
 * Description    : Draws Time
@@ -136,9 +130,7 @@ int initGame(){
 void DrawTime(uint16_t time, uint16_t textColor, uint16_t bkColor){
 	uint8_t i, j;
 	char timeString[] = "60s";
-	//TODO:fix single digit time draws ss
 	sprintf(timeString,"%02ds",time);
-	//Just cicle trough the matrix and draw it
 	GUI_Text(TIME_XOFFSET, TIME_YOFFSET,(uint8_t*)timeString, textColor, bkColor);
 }
 
@@ -169,7 +161,7 @@ void DrawScore(uint16_t score, uint16_t textColor, uint16_t bkColor){
 * Attention		 : None
 *******************************************************************************/
 
-//TODO: add color input to make it sed when it is low
+
 void DrawLives(){
 	int i=0;
 	for(i=0; i<playerLives;++i){
@@ -461,10 +453,7 @@ void DrawMiddleText(){
 		GUI_Text(12*CELL_DIM+4,18*CELL_DIM+TEXT_OFFSET,(uint8_t*)"OVER",Yellow,Black);
 		return;
 	}
-	//sennó puliamo le celle dalla x=16 y=10 alla x=20 y=19
 	
-	
-	//TODO: understand why if it is not volatile it assigns a memory address
 	uint8_t i,j;
 	for(i=16; i<=20; ++i){
 		for(j=10;j<=19; ++j){
@@ -830,7 +819,6 @@ void SpawnLargeDot(){
 		while(generating){
 			i=rand()*pacmanState.pmXpos;
 			j=rand()*pacmanState.pmYpos;
-			//TODO: a quanto pare % non funziona 
 			i=i-((i/(GAME_ROWS-1))*(GAME_ROWS-1));
 			j=j-((j/(GAME_COLUMNS-1))*(GAME_COLUMNS-1));
 			
