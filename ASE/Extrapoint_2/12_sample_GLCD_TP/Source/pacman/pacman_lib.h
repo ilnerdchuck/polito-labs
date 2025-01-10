@@ -35,7 +35,8 @@ typedef enum : uint8_t {
 	brAngle, 	//BottomRight Corner
 	pacman, 	//The one and only PAC-MAN
 	teleport, //The famous PAC-MAN effect tile
-	blank 		//Empty cell
+	blank, 		//Empty cell
+	blinky	  //Fantasmino
 } cellType;
 
 //type to handle pacman direction
@@ -62,6 +63,7 @@ typedef struct{
 extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
 extern uint16_t gamePoints;
 extern pmState pacmanState;
+extern pmState blinkyState;
 extern uint8_t gameTime;
 extern uint16_t playerPoints;
 extern uint8_t playerLives;
@@ -82,6 +84,12 @@ void DrawMiddleText();
 void DrawLives(uint8_t);
 void animateFrame();
 
+//Fantasmoni things
+void DrawBlinky( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_t bkColor);
+void updateBlinkyPos();
+//cellType GetNextBlinkyCellType(pmDir nextDir);
+void animateBlinkyFrame();
+int checkIntersection();
 //Movement functions
 cellType GetNextCellType(pmDir);
 void updatePacmanPos(pmDir);

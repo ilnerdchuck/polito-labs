@@ -455,8 +455,6 @@ void DrawMiddleText(){
 	}
 	
 	uint8_t i,j;
-	//for(i=16; i<=20; ++i){
-	//	for(j=10;j<=19; ++j){
 	for(i=10; i<=12; ++i){
 		for(j=10;j<=16; ++j){
 			//TODO:do a function to draw instead of this mess 

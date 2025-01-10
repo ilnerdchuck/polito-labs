@@ -63,11 +63,19 @@ void TIMER0_IRQHandler (void){
 **
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
-	if(gameStatus != 0 || pacmanState.pmNextDir == pmStuck){
+	if(gameStatus != 0){
 		LPC_TIM1->IR = 1;	
 		return;
 	}
+	//---------------Blinky Updating----------------------------
+	if(blinkyState.aFrame<8){
+		animateBlinkyFrame();
+	}else{
+		updateBlinkyPos();
+	}
+		
 	
+	//-------------Pacman updating------------------------
 	//i can use an integer of 8 values(1-8) draw the animation
 	//i can place it in the pacmanstatus
 	if(pacmanState.aFrame<8){
@@ -98,7 +106,6 @@ void TIMER1_IRQHandler (void){
 			updatePacmanPos(pmStuck);
 		}
 	}
-	
 	//puoi inizializzare 3 randmo times e quando arrivano spawni a random col and random row un pallino grosso
   LPC_TIM1->IR = 1;			/* clear interrupt flag */
   return;

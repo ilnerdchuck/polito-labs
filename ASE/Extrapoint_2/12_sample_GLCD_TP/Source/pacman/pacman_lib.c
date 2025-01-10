@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //Templates for the pixel drawing
+
 uint8_t smallPointTmp[CELL_DIM][CELL_DIM] = {	0,0,0,0,0,0,0,0,
 																							0,0,0,0,0,0,0,0,
 																							0,0,0,1,1,0,0,0,
@@ -57,6 +58,15 @@ uint8_t pacmanFilledTmp[CELL_DIM][CELL_DIM] = {0,0,1,1,1,1,0,0,
 																							 0,1,1,1,1,1,1,0,
 																							 0,0,1,1,1,1,0,0};
 
+uint8_t blinkyTmp[CELL_DIM][CELL_DIM] = {0,0,0,1,1,0,0,0,
+																				 0,0,1,1,1,1,0,0,
+																				 0,1,2,1,1,2,1,0,
+																				 0,1,2,1,1,2,1,0,
+																				 0,1,1,1,1,1,1,0,
+																				 0,1,1,1,1,1,1,0,
+																				 0,1,0,1,0,1,0,0,
+																				 0,0,0,0,0,0,0,0};
+
 																							 
 //TODO: maybe all draw functions add automatically CELL_DIM and TEXT OFFSET
 /******************************************************************************
@@ -108,6 +118,15 @@ int initGame(){
 				pacmanState.pmCurrDir = pmLeft;
 				pacmanState.pmNextDir = pmLeft;
 				pacmanState.aFrame = 8;
+			}else if(GameState[i][j]==blinky){
+				DrawBlinky(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Red,Black);
+				blinkyState.pmXpos = i;
+				blinkyState.pmYpos = j;
+				blinkyState.pmOldXpos = i;
+				blinkyState.pmOldYpos = j;
+				blinkyState.pmCurrDir = pmLeft;
+				blinkyState.pmNextDir = pmLeft;
+				blinkyState.aFrame = 8;
 			}
 		}
 	}
@@ -409,6 +428,36 @@ void DrawPacman( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_
 * Attention		 : None
 *******************************************************************************/
 
+
+/******************************************************************************
+* Function Name  : DrawBlinky
+* Description    : Draws PAC-MAN
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on success, -1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+void DrawBlinky( uint16_t Xpos, uint16_t Ypos,pmDir dir,uint16_t pmColor,uint16_t bkColor){
+	uint8_t i, j;
+	uint8_t i_r, j_r;
+	
+	for( i=0; i<CELL_DIM; ++i){
+		for( j=0; j<CELL_DIM; ++j){
+			if(blinkyTmp[i][j] == 1){
+					LCD_SetPoint( Xpos + j, Ypos + i, pmColor);
+			}else if(blinkyTmp[i][j] == 2){
+					LCD_SetPoint( Xpos + j, Ypos + i, White);  
+			}else{
+					LCD_SetPoint( Xpos + j, Ypos + i, bkColor );  
+			}
+		}
+	}
+}
+
+
 void DrawFilledPacman( uint16_t Xpos, uint16_t Ypos, uint16_t pmColor,uint16_t bkColor){
 	uint8_t i, j;
 	uint8_t i_r, j_r;
@@ -474,6 +523,8 @@ void DrawMiddleText(){
 				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
 			}else if(GameState[i][j]==pacman){
 				DrawPacman(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Yellow,Black);
+			}else if(GameState[i][j]==blinky){
+				DrawBlinky(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Red,Black);
 			}
 		}
 	}
@@ -527,6 +578,58 @@ void animateFrame(){
 			DrawPacman(Ypos,Xpos,dir,Yellow, Black);
 		}
 		
+}
+
+
+/******************************************************************************
+* Function Name  : updatePacmanPos
+* Description    : Updates PAC-MAN position
+* Input          : NextDir
+* Output         : None
+* Return         : None
+* Attention		 	 : None
+*******************************************************************************/
+
+//the idea is that everything that moves has 8 keyframes i draw only the necessary 
+//pixels to update less things possible
+
+//V1.0 no key frames i delete the old update the new
+void animateBlinkyFrame(){
+	
+	//i take the pacman dir 
+	pmDir dir = blinkyState.pmCurrDir;
+
+	
+			
+  if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==smallDot || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==largeDot){
+		DrawPoint(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET, GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos], White, Black);
+	}else if(	GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==hWall || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==vWall || 
+						GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==blAngle || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==brAngle|| 
+						GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==tlAngle || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==trAngle){
+		DrawWall(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET, GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos], Blue, Black);
+	}else if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==blank){
+		DrawBlank(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
+	}else if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==teleport){
+		DrawBlank(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
+	}
+
+	uint16_t Xpos, Ypos;
+	++blinkyState.aFrame;
+	//i need to handle animation in the teleport also
+		if(dir == pmUp){
+			Xpos = blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET-blinkyState.aFrame;
+			Ypos = blinkyState.pmOldYpos*CELL_DIM;
+		}else if(dir== pmDown){
+			Xpos = (blinkyState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+blinkyState.aFrame;
+			Ypos = blinkyState.pmOldYpos*CELL_DIM;
+		}else if(dir == pmLeft){
+			Xpos = blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
+			Ypos = blinkyState.pmOldYpos*CELL_DIM-blinkyState.aFrame;
+		}else if(dir == pmRight){
+			Xpos = (blinkyState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
+			Ypos = (blinkyState.pmOldYpos*CELL_DIM)+blinkyState.aFrame;
+		}
+		DrawBlinky(Ypos, Xpos,dir,Red,Black);
 }
 
 //**************************END DRAW FUNCTIONS*********************************
@@ -631,7 +734,121 @@ void updatePacmanPos(pmDir nextDir){
 	pacmanState.pmCurrDir = nextDir;
 	pacmanState.aFrame = 0;
 }
+//-------------------------Fantasmino Position-------------------------------
 
+/******************************************************************************
+* Function Name  : CheckNextPos
+* Description    : Checks if next position is a wall or a teleport
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+cellType GetNextBlinkyCellType(pmDir nextDir){
+	uint8_t nextXpos, nextYpos;
+	
+	if(GameState[blinkyState.pmXpos][blinkyState.pmYpos] == teleport){
+		return GameState[blinkyState.pmXpos][blinkyState.pmYpos];
+	}
+	
+	if(nextDir == pmUp){
+		nextXpos = blinkyState.pmXpos - 1;
+		nextYpos = blinkyState.pmYpos;
+	}else if(nextDir == pmDown){
+		nextXpos = blinkyState.pmXpos + 1;
+		nextYpos = blinkyState.pmYpos;
+	}else if(nextDir == pmLeft){
+		nextYpos = blinkyState.pmYpos - 1;
+		nextXpos = blinkyState.pmXpos;
+	}else if(nextDir == pmRight){
+		nextYpos = blinkyState.pmYpos + 1;
+		nextXpos = blinkyState.pmXpos;
+	}
+	return GameState[nextXpos][nextYpos];
+}
+
+
+/******************************************************************************
+* Function Name  : updatePacmanPos
+* Description    : Updates PAC-MAN position
+* Input          : NextDir
+* Output         : None
+* Return         : None
+* Attention		 	 : None
+*******************************************************************************/
+
+void updateBlinkyPos(){
+	
+	uint8_t i, j;
+	blinkyState.pmOldXpos = blinkyState.pmXpos;
+	blinkyState.pmOldYpos = blinkyState.pmYpos;
+	
+	//se gioco in non spauro
+	if((CheckIfWall(GetNextBlinkyCellType(pmUp))==-1) && blinkyState.pmXpos > pacmanState.pmXpos ){
+		blinkyState.pmNextDir = pmUp;
+	}else if(blinkyState.pmXpos < pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmDown)) == -1)){
+		blinkyState.pmNextDir = pmDown;
+	}else if(blinkyState.pmYpos < pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmRight)) ==-1)){
+		blinkyState.pmNextDir = pmRight;
+	}else if(blinkyState.pmYpos > pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmLeft))==-1)){
+		blinkyState.pmNextDir = pmLeft;
+	}  
+	
+	/*se gioco in spauro
+	if(blinkyState.pmXpos > pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmUp))!=0)){
+		
+	}else if(blinkyState.pmXpos < pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmDown)) != 0)){
+		blinkyState.pmNextDir = pmDown;
+	}else if(blinkyState.pmYpos < pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmRight))!= 0)){
+		blinkyState.pmNextDir = pmRight;
+	}else if(blinkyState.pmYpos > pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmLeft))!= 0)){
+		blinkyState.pmNextDir = pmLeft;
+	} 
+	*/
+	//effettivo  update
+	if(GameState[blinkyState.pmXpos][blinkyState.pmYpos] != teleport){
+		if(blinkyState.pmNextDir == pmUp){
+			--blinkyState.pmXpos;
+		}else if(blinkyState.pmNextDir == pmDown){
+			++blinkyState.pmXpos;
+		}else if(blinkyState.pmNextDir == pmLeft){
+			--blinkyState.pmYpos;
+		}else if(blinkyState.pmNextDir == pmRight){
+			++blinkyState.pmYpos;
+		}
+		
+	}else{
+		if(blinkyState.pmNextDir == pmLeft && blinkyState.pmYpos == 0){
+			blinkyState.pmYpos = GAME_COLUMNS-1;
+		}else if(blinkyState.pmNextDir == pmRight && blinkyState.pmYpos == GAME_COLUMNS-1){
+			blinkyState.pmYpos = 0;
+		}else{
+			//senno sto uscendo dal teleport e quindi devo aggioranre come sopra ma solo la Y non la X
+			if(blinkyState.pmNextDir == pmLeft){
+				--blinkyState.pmYpos;
+			}else if(blinkyState.pmNextDir == pmRight){
+				++blinkyState.pmYpos;
+			}	
+		}
+	}
+	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos ){
+			pacmanState.aFrame = 8;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
+			pacmanState.pmXpos = 14;
+			pacmanState.pmYpos = 13;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+			--playerLives;
+			SendCanInfo();
+			if(!playerLives){
+				SetGameOver();
+			}
+	}
+	
+	blinkyState.pmCurrDir = blinkyState.pmNextDir;
+	blinkyState.aFrame = 0;
+}
 
 //***********************END POSITION FUNCTIONS*******************************
 //**************************UTILITY FUNCTIONS*********************************
@@ -669,13 +886,11 @@ int UpdateScore(cellType cell){
 	if(cell == smallDot){
 			playerPoints += 10;
 			tmpScore += 10;
-			//DrawScore(playerPoints, White, Black);
 			--gamePoints;
 			playEat =1;
 	}else if(cell == largeDot){
 			playerPoints += 50;
 			tmpScore += 50;
-			//DrawScore(playerPoints, White, Black);
 			--gamePoints;
 			playEat =1;
 	}
@@ -684,7 +899,6 @@ int UpdateScore(cellType cell){
 	}
 	if(tmpScore>=1000){
 		++playerLives;
-		//DrawLives(playerLives);
 		tmpScore = 0;
 	}
 	SendCanInfo();
@@ -822,12 +1036,17 @@ void SpawnLargeDot(){
 		uint16_t i,j;
 		int generating =1;
 		while(generating){
-			i=rand()*pacmanState.pmXpos;
-			j=rand()*pacmanState.pmYpos;
+			if(pacmanState.pmYpos != 0 && pacmanState.pmYpos != 0 ){
+				i=rand()*pacmanState.pmXpos;
+				j=rand()*pacmanState.pmYpos;
+			}else{
+				i=rand();
+				j=rand();
+			}
+			
 			//TODO: a quanto pare % non funziona 
 			i=i-((i/(GAME_ROWS-1))*(GAME_ROWS-1));
 			j=j-((j/(GAME_COLUMNS-1))*(GAME_COLUMNS-1));
-			
 			
 			if(GameState[i][j]==smallDot){
 				GameState[i][j]=largeDot;

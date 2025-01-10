@@ -44,7 +44,7 @@ void RIT_IRQHandler (void)
 		pacmanState.pmNextDir = pmDown;
 	}else if(!(LPC_GPIO1->FIOPIN & (1<<27))){
 		//Left
-		pacmanState.pmNextDir = pmLeft;  
+		pacmanState.pmNextDir = pmLeft;	
 	}else if(!(LPC_GPIO1->FIOPIN & (1<<28))){
 		//Right
 		pacmanState.pmNextDir = pmRight;
@@ -52,7 +52,7 @@ void RIT_IRQHandler (void)
 		//Up
 		pacmanState.pmNextDir = pmUp;  
 	}else{
-		pacmanState.pmNextDir = pacmanState.pmCurrDir;  
+		pacmanState.pmNextDir = pacmanState.pmCurrDir;	
 	}
 	
 	//button debounced
