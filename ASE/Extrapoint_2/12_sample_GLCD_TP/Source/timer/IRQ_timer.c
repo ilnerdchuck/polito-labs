@@ -122,8 +122,10 @@ void TIMER1_IRQHandler (void){
 ******************************************************************************/
 void TIMER2_IRQHandler (void){
 	//handles game time
-	//DrawTime(--gameTime, White, Black);	//otherwise update the neext position
+	//DrawTime(--gameTime, White, Black);
 	--gameTime;
+	powerUP = powerUP==0?0:powerUP-1;
+	
 	SendCanInfo();
 	if(!gameTime){
 		SetGameOver();

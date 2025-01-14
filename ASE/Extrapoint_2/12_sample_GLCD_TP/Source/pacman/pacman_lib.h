@@ -36,7 +36,9 @@ typedef enum : uint8_t {
 	pacman, 	//The one and only PAC-MAN
 	teleport, //The famous PAC-MAN effect tile
 	blank, 		//Empty cell
-	blinky	  //Fantasmino
+	blinky,	  //Fantasmino
+	intersection, //Intersection for blinky movement
+	emptyinter //Intersection for blinky movement
 } cellType;
 
 //type to handle pacman direction
@@ -57,20 +59,21 @@ typedef struct{
 	uint8_t aFrame;
 	uint8_t pmOldXpos;			//Current X position
 	uint8_t pmOldYpos;		 	//Current Y position
+	cellType oldCell;
 }pmState;
 
 //Everyone can check the Game State with the matrix
-extern cellType GameState[GAME_ROWS][GAME_COLUMNS];
-extern uint16_t gamePoints;
-extern pmState pacmanState;
-extern pmState blinkyState;
-extern uint8_t gameTime;
-extern uint16_t playerPoints;
-extern uint8_t playerLives;
-extern uint8_t gameStatus;
-extern uint8_t largeDotRemaining;
-extern uint8_t playEat;
-
+extern cellType GameState[GAME_ROWS][GAME_COLUMNS]; //Handles the game map status
+extern uint16_t gamePoints;					//Handles how many pills are in the map
+extern pmState pacmanState;					//Handles pacman status
+extern pmState blinkyState;					//Handles the fantasmino
+extern uint8_t gameTime;						//Handles game time
+extern uint16_t playerPoints;				//Handles the game score
+extern uint8_t playerLives;					//Handles the amount of player lives
+extern uint8_t gameStatus;					//Handles if the fame is Running-Won-Paused-Losed
+extern uint8_t largeDotRemaining;		//Handels how many large dots need to spawn
+extern uint8_t playEat;							//Handles the enable signal to play the sound when eating
+extern uint8_t powerUP;							//Handles if the player has taken a powerup if >0 has power up
 //Draw functions
 int initGame();
 void DrawTime(uint8_t, uint16_t, uint16_t);
@@ -97,6 +100,7 @@ void updatePacmanPos(pmDir);
 //Utility funcitons
 int init_hardware();
 int CheckIfWall(cellType);
+int CheckIfAngle(uint8_t, uint8_t);
 int UpdateScore(cellType);
 void SetGameWon();
 void SetGameOver();

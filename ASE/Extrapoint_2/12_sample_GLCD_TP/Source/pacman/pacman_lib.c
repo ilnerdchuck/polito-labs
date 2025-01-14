@@ -98,7 +98,7 @@ int initGame(){
 	for(i=0; i<GAME_ROWS; ++i){
 		for(j=0;j<GAME_COLUMNS; ++j){
 			//TODO:do a function to draw instead of this mess (DrawCell(cellType cell) e disegna tutto)
-			if(GameState[i][j] == smallDot){
+			if(GameState[i][j] == smallDot || GameState[i][j] == intersection){
 				gamePoints++;
 				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);				
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
@@ -118,6 +118,7 @@ int initGame(){
 				pacmanState.pmCurrDir = pmLeft;
 				pacmanState.pmNextDir = pmLeft;
 				pacmanState.aFrame = 8;
+				pacmanState.oldCell = blank;
 			}else if(GameState[i][j]==blinky){
 				DrawBlinky(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,pmLeft,Red,Black);
 				blinkyState.pmXpos = i;
@@ -127,6 +128,7 @@ int initGame(){
 				blinkyState.pmCurrDir = pmLeft;
 				blinkyState.pmNextDir = pmLeft;
 				blinkyState.aFrame = 8;
+				blinkyState.oldCell = blank;
 			}
 		}
 	}
@@ -185,6 +187,9 @@ void DrawScore(uint16_t score, uint16_t textColor, uint16_t bkColor){
 //TODO: add color input to make it sed when it is low
 void DrawLives(uint8_t lives){
 	int i=0;
+	for(i=0; i<5;++i){
+		DrawBlank(i*CELL_DIM,LIVES_OFFSET,Black);	
+	}
 	for(i=0; i<lives;++i){
 		DrawPacman(i*CELL_DIM,LIVES_OFFSET,pmLeft,Yellow, Black);	
 	}
@@ -226,7 +231,7 @@ void DrawBlank( uint16_t Xpos, uint16_t Ypos,uint16_t bkColor){
 int DrawPoint( uint16_t Xpos, uint16_t Ypos,uint8_t pointType, uint16_t pointColor, uint16_t bkColor){
 	uint16_t i, j;
 	// Take the correct matrix template to draw the point
-	uint8_t (*pointTemplate)[CELL_DIM] = pointType==smallDot? smallPointTmp : pointType==largeDot? largePointTmp: 0;
+	uint8_t (*pointTemplate)[CELL_DIM] = pointType==smallDot? smallPointTmp : pointType==largeDot? largePointTmp: pointType==intersection? smallPointTmp: 0;
 	if(pointTemplate == 0){
 			return -1;
 	}
@@ -511,13 +516,13 @@ void DrawMiddleText(){
 	for(i=10; i<=12; ++i){
 		for(j=10;j<=16; ++j){
 			//TODO:do a function to draw instead of this mess 
-			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot){
+			if(GameState[i][j]==smallDot || GameState[i][j]==largeDot || GameState[i][j]==intersection){
 				DrawPoint(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], White, Black);
 			}else if(	GameState[i][j]==hWall || GameState[i][j]==vWall || 
 								GameState[i][j]==blAngle || GameState[i][j]==brAngle|| 
 								GameState[i][j]==tlAngle || GameState[i][j]==trAngle){
 				DrawWall(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET, GameState[i][j], Blue, Black);
-			}else if(GameState[i][j]==blank){
+			}else if(GameState[i][j]==blank || GameState[i][j]==emptyinter){
 				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
 			}else if(GameState[i][j]==teleport){
 				DrawBlank(j*CELL_DIM, i*CELL_DIM+TEXT_OFFSET,Black);
@@ -593,21 +598,20 @@ void animateFrame(){
 //the idea is that everything that moves has 8 keyframes i draw only the necessary 
 //pixels to update less things possible
 
-//V1.0 no key frames i delete the old update the new
 void animateBlinkyFrame(){
 	
 	//i take the pacman dir 
 	pmDir dir = blinkyState.pmCurrDir;
 
 	
-			
-  if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==smallDot || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==largeDot){
+	//TODO: maybe use the check if wall
+  if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==smallDot || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==largeDot|| GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==intersection){
 		DrawPoint(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET, GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos], White, Black);
 	}else if(	GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==hWall || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==vWall || 
 						GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==blAngle || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==brAngle|| 
 						GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==tlAngle || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==trAngle){
 		DrawWall(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET, GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos], Blue, Black);
-	}else if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==blank){
+	}else if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==blank || GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==emptyinter){
 		DrawBlank(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
 	}else if(GameState[blinkyState.pmOldXpos][blinkyState.pmOldYpos]==teleport){
 		DrawBlank(blinkyState.pmOldYpos*CELL_DIM, blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET,Black);
@@ -699,7 +703,11 @@ void updatePacmanPos(pmDir nextDir){
 	//thne if my currpos is a tp i switch drawing orientation
 	//i was going right i need to teleport left and viceversa
 	if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] != teleport){
-		GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
+		if(pacmanState.oldCell == intersection || pacmanState.oldCell == emptyinter ){
+			GameState[pacmanState.pmOldXpos][pacmanState.pmOldYpos]= emptyinter;
+		}else{
+			GameState[pacmanState.pmOldXpos][pacmanState.pmOldYpos]= blank;
+		}
 		if(nextDir == pmUp){
 			--pacmanState.pmXpos;
 		}else if(nextDir == pmDown){
@@ -712,6 +720,7 @@ void updatePacmanPos(pmDir nextDir){
 		UpdateScore(GameState[pacmanState.pmXpos][pacmanState.pmYpos]);
 		//dont alter the tp cell
 		if(GameState[pacmanState.pmXpos][pacmanState.pmYpos] != teleport){
+			pacmanState.oldCell = GameState[pacmanState.pmXpos][pacmanState.pmYpos];
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 		}
 	}else{
@@ -726,8 +735,7 @@ void updatePacmanPos(pmDir nextDir){
 			}else if(nextDir == pmRight){
 				++pacmanState.pmYpos;
 			}	
-			//TODO: Why i do this? se sono in un teleport non devo farlo
-			// ah ok uscendo la prossima posizione 'e pacman
+			pacmanState.oldCell = GameState[pacmanState.pmXpos][pacmanState.pmYpos];
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 		}
 	}
@@ -779,34 +787,95 @@ cellType GetNextBlinkyCellType(pmDir nextDir){
 * Attention		 	 : None
 *******************************************************************************/
 
+cellType _resCell;
 void updateBlinkyPos(){
 	
 	uint8_t i, j;
+	
 	blinkyState.pmOldXpos = blinkyState.pmXpos;
 	blinkyState.pmOldYpos = blinkyState.pmYpos;
+	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP==0){
+			pacmanState.aFrame = 8;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacmanState.oldCell;
+			pacmanState.oldCell = blank;
+			pacmanState.pmXpos = 14;
+			pacmanState.pmYpos = 13;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+			--playerLives;
+			if(!playerLives){
+				SetGameOver();
+			}
+	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos){
+			blinkyState.aFrame = 8;
+			blinkyState.pmXpos = 14;
+			blinkyState.pmYpos = 13;
+			playerPoints += 100;
+	}
 	
-	//se gioco in non spauro
-	if((CheckIfWall(GetNextBlinkyCellType(pmUp))==-1) && blinkyState.pmXpos > pacmanState.pmXpos ){
-		blinkyState.pmNextDir = pmUp;
-	}else if(blinkyState.pmXpos < pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmDown)) == -1)){
-		blinkyState.pmNextDir = pmDown;
-	}else if(blinkyState.pmYpos < pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmRight)) ==-1)){
-		blinkyState.pmNextDir = pmRight;
-	}else if(blinkyState.pmYpos > pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmLeft))==-1)){
-		blinkyState.pmNextDir = pmLeft;
-	}  
+	//faccio il check se sono ad un intersezione sennó continuo nella mia solita direzione
+	if(GameState[blinkyState.pmXpos][blinkyState.pmYpos] == intersection || GameState[blinkyState.pmXpos][blinkyState.pmYpos] == emptyinter ){
+		//siamo ad un itnersezione aggiornamo la nextdir
+		//con qualsiasi algoritmo scegliamo e se siamo in non spauro		
+		if(powerUP==0){
+			//non in spauracchio uso il mio algoritmo di scelta
+			//chiamo il mio fantastico algoritmo di scelta della direzione
+			if((CheckIfWall(GetNextBlinkyCellType(pmUp))==-1) && blinkyState.pmXpos > pacmanState.pmXpos ){
+				blinkyState.pmNextDir = pmUp;
+			}else if((CheckIfWall(GetNextBlinkyCellType(pmDown)) == -1) && blinkyState.pmXpos < pacmanState.pmXpos){
+				blinkyState.pmNextDir = pmDown;
+			}else if((CheckIfWall(GetNextBlinkyCellType(pmRight)) ==-1) && blinkyState.pmYpos < pacmanState.pmYpos ){
+				blinkyState.pmNextDir = pmRight;
+			}else if((CheckIfWall(GetNextBlinkyCellType(pmLeft))==-1) && blinkyState.pmYpos > pacmanState.pmYpos ){
+				blinkyState.pmNextDir = pmLeft;
+			}
+		}else{
+			//se gioco in spauro
+			//se non sono ad un angolo faccio il classico
+			if(CheckIfAngle(blinkyState.pmXpos,blinkyState.pmYpos)==0){
+				
+				if(CheckIfWall(GameState[blinkyState.pmXpos][blinkyState.pmYpos-1])==0 && CheckIfWall(GameState[blinkyState.pmXpos+1][blinkyState.pmYpos])==0){
+					if(blinkyState.pmNextDir==pmDown){
+						blinkyState.pmNextDir=pmRight;
+					}else{
+						blinkyState.pmNextDir=pmUp;
+					}
+				}
+				if(CheckIfWall(GameState[blinkyState.pmXpos][blinkyState.pmYpos+1])==0 && CheckIfWall(GameState[blinkyState.pmXpos+1][blinkyState.pmYpos])==0){
+					if(blinkyState.pmNextDir==pmDown){
+						blinkyState.pmNextDir=pmLeft;
+					}else{
+						blinkyState.pmNextDir=pmUp;
+					}
+				}
+				if(CheckIfWall(GameState[blinkyState.pmXpos][blinkyState.pmYpos-1])==0 && CheckIfWall(GameState[blinkyState.pmXpos-1][blinkyState.pmYpos])==0){
+					if(blinkyState.pmNextDir==pmUp){
+						blinkyState.pmNextDir=pmRight;
+					}else{
+						blinkyState.pmNextDir=pmDown;
+					}
+				}	
+				if(CheckIfWall(GameState[blinkyState.pmXpos][blinkyState.pmYpos+1])==0 && CheckIfWall(GameState[blinkyState.pmXpos -1][blinkyState.pmYpos])==0){
+					if(blinkyState.pmNextDir==pmUp){
+						blinkyState.pmNextDir=pmLeft;
+					}else{
+						blinkyState.pmNextDir=pmDown;
+					}
+				}	
+			}else{
+				//prendo una delle direzioni avialable
+				if((CheckIfWall(GetNextBlinkyCellType(pmDown))==-1) && blinkyState.pmXpos >= pacmanState.pmXpos ){
+					blinkyState.pmNextDir = pmDown;
+				}else if(blinkyState.pmXpos <= pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmUp)) == -1)){
+					blinkyState.pmNextDir = pmUp;
+				}else if(blinkyState.pmYpos <= pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmLeft)) ==-1)){
+					blinkyState.pmNextDir = pmLeft;
+				}else if(blinkyState.pmYpos >= pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmRight))==-1)){
+					blinkyState.pmNextDir = pmRight;
+				}
+			}
+		}
+	}
 	
-	/*se gioco in spauro
-	if(blinkyState.pmXpos > pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmUp))!=0)){
-		
-	}else if(blinkyState.pmXpos < pacmanState.pmXpos && (CheckIfWall(GetNextBlinkyCellType(pmDown)) != 0)){
-		blinkyState.pmNextDir = pmDown;
-	}else if(blinkyState.pmYpos < pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmRight))!= 0)){
-		blinkyState.pmNextDir = pmRight;
-	}else if(blinkyState.pmYpos > pacmanState.pmYpos && (CheckIfWall(GetNextBlinkyCellType(pmLeft))!= 0)){
-		blinkyState.pmNextDir = pmLeft;
-	} 
-	*/
 	//effettivo  update
 	if(GameState[blinkyState.pmXpos][blinkyState.pmYpos] != teleport){
 		if(blinkyState.pmNextDir == pmUp){
@@ -817,8 +886,7 @@ void updateBlinkyPos(){
 			--blinkyState.pmYpos;
 		}else if(blinkyState.pmNextDir == pmRight){
 			++blinkyState.pmYpos;
-		}
-		
+		}		
 	}else{
 		if(blinkyState.pmNextDir == pmLeft && blinkyState.pmYpos == 0){
 			blinkyState.pmYpos = GAME_COLUMNS-1;
@@ -833,17 +901,22 @@ void updateBlinkyPos(){
 			}	
 		}
 	}
-	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos ){
+	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP==0){
 			pacmanState.aFrame = 8;
-			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = blank;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacmanState.oldCell;
+			pacmanState.oldCell = blank;
 			pacmanState.pmXpos = 14;
 			pacmanState.pmYpos = 13;
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 			--playerLives;
-			SendCanInfo();
 			if(!playerLives){
 				SetGameOver();
 			}
+	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos){
+			blinkyState.aFrame = 8;
+			blinkyState.pmXpos = 14;
+			blinkyState.pmYpos = 13;
+			playerPoints += 100;
 	}
 	
 	blinkyState.pmCurrDir = blinkyState.pmNextDir;
@@ -872,6 +945,35 @@ int CheckIfWall(cellType checkWall){
 }
 
 /******************************************************************************
+* Function Name  : CheckIfWall
+* Description    : Checks if cell is a wall
+* Input          : - Xpos:  
+*                  - Ypos:  
+*                  - Orientation: 
+* Output         : None
+* Return         : 0 on small dot, 1 on large dot, 2 on teleport, 3 blank ,-1 otherwise
+* Attention		 : None
+*******************************************************************************/
+
+int CheckIfAngle(uint8_t Xpos, uint8_t Ypos){
+	//|*
+	//L_
+	if(CheckIfWall(GameState[Xpos][Ypos-1])==0 && CheckIfWall(GameState[Xpos+1][Ypos])==0){
+		return 0;
+	}
+	if(CheckIfWall(GameState[Xpos][Ypos+1])==0 && CheckIfWall(GameState[Xpos+1][Ypos])==0){
+		return 0;
+	}
+	if(CheckIfWall(GameState[Xpos][Ypos-1])==0 && CheckIfWall(GameState[Xpos-1][Ypos])==0){
+		return 0;
+	}	
+	if(CheckIfWall(GameState[Xpos][Ypos+1])==0 && CheckIfWall(GameState[Xpos-1][Ypos])==0){
+		return 0;
+	}	
+	return -1;
+}
+
+/******************************************************************************
 * Function Name  : Update Score
 * Description    : If the cell is a point type updates and draws the score
 * Input          : - Xpos:  
@@ -889,6 +991,7 @@ int UpdateScore(cellType cell){
 			--gamePoints;
 			playEat =1;
 	}else if(cell == largeDot){
+			powerUP = 10; //we set the 10 seconds of powerup
 			playerPoints += 50;
 			tmpScore += 50;
 			--gamePoints;
