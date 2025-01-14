@@ -16,6 +16,8 @@
 #include "RIT/RIT.h"
 #include <stdio.h> 
 
+int counter =0;
+
 uint16_t SinTable[45] =                                       /* ?????                       */
 {
     410, 467, 523, 576, 627, 673, 714, 749, 778,
@@ -63,52 +65,47 @@ void TIMER0_IRQHandler (void){
 **
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
-	if(gameStatus != 0){
-		LPC_TIM1->IR = 1;	
-		return;
-	}
-	//---------------Blinky Updating----------------------------
-	if(blinkyState.aFrame<8){
-		animateBlinkyFrame();
-	}else{
-		updateBlinkyPos();
-	}
-		
 	
-	//-------------Pacman updating------------------------
-	//i can use an integer of 8 values(1-8) draw the animation
-	//i can place it in the pacmanstatus
-	if(pacmanState.aFrame<8){
-		//update frame and skiddaddle
-		//maybe the animateframe can take an entity and draw it 
-		//regardless if it is pacman or a fantasmino
-		animateFrame();
-		LPC_TIM1->IR = 1;	
-		return;
-	}
-	
-	//ok to solve all issues you check nextpos: if valid u update it
-	//othewise you check next currPos if valid you move
-	//otherwise you are at a wall you draw filled pacman
-	cellType _res = GetNextCellType(pacmanState.pmNextDir); //if wall i dont do anything i go check currNext dir call
-	//If wall uses pmCurDir as next direction
-	if(CheckIfWall(_res)){
-		//non � un muro mi sposto quindi di nuova posizione
-		updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
-	}else if(pacmanState.pmCurrDir != pmStuck){
-		//� un muro continuo con currdir
-		_res = GetNextCellType(pacmanState.pmCurrDir);
-		if(CheckIfWall(_res)){
-			//Pacman is not at a wall
-			updatePacmanPos(pacmanState.pmCurrDir);
+	if(counter%powerUPspeed == 0){
+		//---------------Blinky Updating----------------------------
+		if(blinkyState.aFrame<8){
+			animateBlinkyFrame();
 		}else{
-			//pacman is at a wall for the ffirst time u draw filled pacman
-			updatePacmanPos(pmStuck);
+			updateBlinkyPos();
 		}
 	}
-	//puoi inizializzare 3 randmo times e quando arrivano spawni a random col and random row un pallino grosso
-  LPC_TIM1->IR = 1;			/* clear interrupt flag */
-  return;
+	
+	if(counter%100 == 0){
+		//-------------Pacman updating------------------------
+	
+		if(pacmanState.aFrame<8){
+			animateFrame();
+		}else{
+			//ok to solve all issues you check nextpos: if valid u update it
+			//othewise you check next currPos if valid you move
+			//otherwise you are at a wall you draw filled pacman
+			cellType _res = GetNextCellType(pacmanState.pmNextDir); //if wall i dont do anything i go check currNext dir call
+			//If wall uses pmCurDir as next direction
+			if(CheckIfWall(_res)){
+				//non � un muro mi sposto quindi di nuova posizione
+				updatePacmanPos(pacmanState.pmNextDir); //if no error update pacmanState
+			}else if(pacmanState.pmCurrDir != pmStuck){
+				//� un muro continuo con currdir
+				_res = GetNextCellType(pacmanState.pmCurrDir);
+				if(CheckIfWall(_res)){
+					//Pacman is not at a wall
+					updatePacmanPos(pacmanState.pmCurrDir);
+				}else{
+					//pacman is at a wall for the ffirst time u draw filled pacman
+					updatePacmanPos(pmStuck);
+				}
+			}
+		}
+	}
+	counter++;
+	LPC_TIM1->IR = 1;
+	
+	return;
 }
 
 /******************************************************************************
@@ -124,8 +121,12 @@ void TIMER2_IRQHandler (void){
 	//handles game time
 	//DrawTime(--gameTime, White, Black);
 	--gameTime;
-	powerUP = powerUP==0?0:powerUP-1;
-	
+	if(powerUP==0){
+		powerUP=0;
+		powerUPspeed = 95;
+	}else{
+		--powerUP;
+	}
 	SendCanInfo();
 	if(!gameTime){
 		SetGameOver();

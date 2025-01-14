@@ -74,6 +74,8 @@ extern uint8_t gameStatus;					//Handles if the fame is Running-Won-Paused-Losed
 extern uint8_t largeDotRemaining;		//Handels how many large dots need to spawn
 extern uint8_t playEat;							//Handles the enable signal to play the sound when eating
 extern uint8_t powerUP;							//Handles if the player has taken a powerup if >0 has power up
+extern uint8_t powerUPspeed;
+
 //Draw functions
 int initGame();
 void DrawTime(uint8_t, uint16_t, uint16_t);

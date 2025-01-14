@@ -561,21 +561,24 @@ void animateFrame(){
 	++pacmanState.aFrame;
 	//i need to handle animation in the teleport also
 		if(dir == pmUp){
-		
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET-pacmanState.aFrame;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM;
+			DrawBlank(Ypos,Xpos+1,Black);
 		}else if(dir== pmDown){
 			
 			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+pacmanState.aFrame;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM;
+			DrawBlank(Ypos,Xpos-1,Black);
 		}else if(dir == pmLeft){
 			
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame;
+			DrawBlank(Ypos+1,Xpos,Black);
 		}else if(dir == pmRight){
 			
 			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
 			Ypos = (pacmanState.pmOldYpos*CELL_DIM)+pacmanState.aFrame;
+			DrawBlank(Ypos-1,Xpos,Black);
 		}
 		if(pacmanState.aFrame == 1 ||pacmanState.aFrame == 2 || pacmanState.aFrame == 3 || pacmanState.aFrame == 4 ||pacmanState.aFrame == 7){
 			DrawFilledPacman(Ypos, Xpos, Yellow,Black);
@@ -623,17 +626,26 @@ void animateBlinkyFrame(){
 		if(dir == pmUp){
 			Xpos = blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET-blinkyState.aFrame;
 			Ypos = blinkyState.pmOldYpos*CELL_DIM;
+			DrawBlank(Ypos,Xpos+1,Black);
 		}else if(dir== pmDown){
 			Xpos = (blinkyState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+blinkyState.aFrame;
 			Ypos = blinkyState.pmOldYpos*CELL_DIM;
+			DrawBlank(Ypos,Xpos-1,Black);
 		}else if(dir == pmLeft){
 			Xpos = blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
 			Ypos = blinkyState.pmOldYpos*CELL_DIM-blinkyState.aFrame;
+			DrawBlank(Ypos+1,Xpos,Black);
 		}else if(dir == pmRight){
 			Xpos = (blinkyState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
 			Ypos = (blinkyState.pmOldYpos*CELL_DIM)+blinkyState.aFrame;
+			DrawBlank(Ypos-1,Xpos,Black);
 		}
-		DrawBlinky(Ypos, Xpos,dir,Red,Black);
+		if(powerUP==0){
+			DrawBlinky(Ypos, Xpos,dir,Red,Black);
+		}else{
+			DrawBlinky(Ypos, Xpos,dir,Blue,Black);
+		}
+		
 }
 
 //**************************END DRAW FUNCTIONS*********************************
@@ -690,6 +702,31 @@ void updatePacmanPos(pmDir nextDir){
 	pacmanState.pmOldXpos = pacmanState.pmXpos;
 	pacmanState.pmOldYpos = pacmanState.pmYpos;
 	
+	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP==0){
+			pacmanState.aFrame = 8;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacmanState.oldCell;
+			pacmanState.oldCell = blank;
+			pacmanState.pmXpos = 14;
+			pacmanState.pmYpos = 13;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+			--playerLives;
+			if(!playerLives){
+				SetGameOver();
+			}
+			
+			return;
+	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP!=0){
+			blinkyState.aFrame = 8;
+			blinkyState.pmXpos = 14;
+			blinkyState.pmYpos = 13;
+			blinkyState.pmOldXpos = blinkyState.pmXpos;
+			blinkyState.pmOldYpos = blinkyState.pmYpos;
+			playerPoints += 100;
+			blinkyState.pmCurrDir = pmLeft;
+			blinkyState.pmNextDir = pmLeft;
+			
+	}
+	
 	if(nextDir == pmStuck){
 		DrawFilledPacman(pacmanState.pmYpos*CELL_DIM,pacmanState.pmXpos*CELL_DIM+TEXT_OFFSET, Yellow, Black);
 		pacmanState.pmCurrDir = pmStuck;
@@ -739,6 +776,28 @@ void updatePacmanPos(pmDir nextDir){
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 		}
 	}
+	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP==0){
+			pacmanState.aFrame = 8;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacmanState.oldCell;
+			pacmanState.oldCell = blank;
+			pacmanState.pmXpos = 14;
+			pacmanState.pmYpos = 13;
+			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
+			--playerLives;
+			if(!playerLives){
+				SetGameOver();
+			}
+			return;
+	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP!=0){
+			blinkyState.aFrame = 8;
+			blinkyState.pmXpos = 14;
+			blinkyState.pmYpos = 13;
+			blinkyState.pmOldXpos = blinkyState.pmXpos;
+			blinkyState.pmOldYpos = blinkyState.pmYpos;
+			playerPoints += 100;
+			blinkyState.pmCurrDir = pmLeft;
+			blinkyState.pmNextDir = pmLeft;
+	}
 	pacmanState.pmCurrDir = nextDir;
 	pacmanState.aFrame = 0;
 }
@@ -787,13 +846,13 @@ cellType GetNextBlinkyCellType(pmDir nextDir){
 * Attention		 	 : None
 *******************************************************************************/
 
-cellType _resCell;
 void updateBlinkyPos(){
 	
 	uint8_t i, j;
 	
 	blinkyState.pmOldXpos = blinkyState.pmXpos;
 	blinkyState.pmOldYpos = blinkyState.pmYpos;
+	
 	if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP==0){
 			pacmanState.aFrame = 8;
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacmanState.oldCell;
@@ -805,11 +864,16 @@ void updateBlinkyPos(){
 			if(!playerLives){
 				SetGameOver();
 			}
-	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos){
+	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP!=0){
 			blinkyState.aFrame = 8;
 			blinkyState.pmXpos = 14;
 			blinkyState.pmYpos = 13;
+			blinkyState.pmOldXpos = blinkyState.pmXpos;
+			blinkyState.pmOldYpos = blinkyState.pmYpos;
 			playerPoints += 100;
+			blinkyState.pmCurrDir = pmLeft;
+			blinkyState.pmNextDir = pmLeft;
+			return;
 	}
 	
 	//faccio il check se sono ad un intersezione sennó continuo nella mia solita direzione
@@ -912,11 +976,16 @@ void updateBlinkyPos(){
 			if(!playerLives){
 				SetGameOver();
 			}
-	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos){
+	}else if(pacmanState.pmXpos == blinkyState.pmXpos && pacmanState.pmYpos == blinkyState.pmYpos && powerUP!=0){
 			blinkyState.aFrame = 8;
 			blinkyState.pmXpos = 14;
 			blinkyState.pmYpos = 13;
 			playerPoints += 100;
+			blinkyState.pmOldXpos = blinkyState.pmXpos;
+			blinkyState.pmOldYpos = blinkyState.pmYpos;
+			blinkyState.pmCurrDir = pmLeft;
+			blinkyState.pmNextDir = pmLeft;
+			return;
 	}
 	
 	blinkyState.pmCurrDir = blinkyState.pmNextDir;
@@ -992,6 +1061,7 @@ int UpdateScore(cellType cell){
 			playEat =1;
 	}else if(cell == largeDot){
 			powerUP = 10; //we set the 10 seconds of powerup
+			powerUPspeed = 150;
 			playerPoints += 50;
 			tmpScore += 50;
 			--gamePoints;
@@ -1092,7 +1162,8 @@ int init_hardware(){
 	joystick_init();
 	
 	//init_timer(0,0x001312D0); 							/* a timer																						*/
-	init_timer(1,0x00051615); 						  /* 1/30Hz* 25MHz = 833333 = 0x65B9A 	Game tick timer */
+	//init_timer(1,0x00051615); 						  /* 1/30Hz* 25MHz = 833333 = 0x65B9A 	Game tick timer */
+	init_timer(1,0x00000F15);
 	init_timer(2,0x017D7840);								/* 1s* 25MHz = 25M = 0x17D7840 				Game timer			*/
 	init_RIT(0x004C4B40);
 	enable_RIT();
