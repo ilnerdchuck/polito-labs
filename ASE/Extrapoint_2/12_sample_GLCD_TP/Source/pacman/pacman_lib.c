@@ -706,6 +706,7 @@ void updatePacmanPos(pmDir nextDir){
 			pacmanState.pmYpos = 13;
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 			--playerLives;
+			playDeath=1;
 			if(!playerLives){
 				SetGameOver();
 			}
@@ -780,6 +781,7 @@ void updatePacmanPos(pmDir nextDir){
 			pacmanState.pmYpos = 13;
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 			--playerLives;
+			playDeath=1;
 			if(!playerLives){
 				SetGameOver();
 			}
@@ -858,6 +860,7 @@ void updateBlinkyPos(){
 			pacmanState.pmYpos = 13;
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 			--playerLives;
+			playDeath=1;
 			if(!playerLives){
 				SetGameOver();
 			}
@@ -982,6 +985,7 @@ void updateBlinkyPos(){
 			pacmanState.pmYpos = 13;
 			GameState[pacmanState.pmXpos][pacmanState.pmYpos] = pacman;
 			--playerLives;
+			playDeath=1;
 			if(!playerLives){
 				SetGameOver();
 			}
@@ -1129,10 +1133,11 @@ void PauseToggle(){
 void SetGameOver(){
 	//per pausare disablito tutti i timer ez
 	gameStatus = 3;
+	SendCanInfo();
 	//disable_timer(0);
 	disable_timer(1);
 	disable_timer(2);
-	disable_RIT();
+	//disable_RIT();
 	DrawMiddleText();
 	return;
 }

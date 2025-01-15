@@ -30,10 +30,106 @@
 
 NOTE eat[] = 
 {
-    {e4, time_croma},  // E4, 1/16
-		{pause, time_croma},  // Pause, 1/16
-    {b3, time_croma},  // B3, 1/16
+    {e3, time_semibiscroma/2},  // E4, 1/16
+		{a3b, time_semibiscroma/2},
+		{c4, time_semibiscroma/2},
+		{e4b, time_semibiscroma/2},
+		{g4b, time_semibiscroma/2},
+		{b4b, time_semibiscroma/2},
+		{pause, time_biscroma/2},
+		{b4, time_semibiscroma/2},
+		{g4, time_semibiscroma/2},
+		{e4, time_semibiscroma/2},
+		{d4b, time_semibiscroma/2},
+		{a3, time_semibiscroma/2},
+		{f3, time_semibiscroma/2},
 };
+
+
+NOTE start[] = 
+{
+	// 1
+	{b3,  time_croma},
+	{b4,  time_croma},
+	{g4b, time_croma},
+	{e4b, time_croma},
+	{b4,  time_semicroma},
+	{g4b, time_croma},
+	{e4b, time_croma*3/2},
+
+	{c4, time_croma},
+	{c5, time_croma},
+	{g4, time_croma},
+	{e4, time_croma},
+	{c5, time_semicroma},
+	{g4, time_croma},
+	{e4, time_croma*3/2},
+	
+	{b3,  time_croma},
+	{b4,  time_croma},
+	{g4b, time_croma},
+	{e4b, time_croma},
+	{b4,  time_semicroma},
+	{g4b, time_croma},
+	{e4b, time_croma*3/2},
+	
+	{e4b, time_semicroma},
+	{e4,  time_semicroma},
+	{f4,  time_croma},
+	{f4,  time_semicroma},
+	{g4b, time_semicroma},
+	{g4,  time_croma},
+	{a4b, time_semicroma},
+	{a4,  time_croma},
+	{b4,  time_semiminima},
+	
+};
+NOTE death[] = 
+{
+	// 1
+	{a5b, time_semibiscroma/2},
+	{g5, time_semibiscroma/2},
+	{a5b, time_semibiscroma/2},
+	{g5, time_semibiscroma/2},
+	{g5b, time_semibiscroma/2},
+	{g5, time_semibiscroma/2},
+	{g5b, time_semibiscroma/2},
+	{f5, time_semibiscroma/2},
+	{g5b, time_semibiscroma/2},
+	{f5, time_semibiscroma/2},
+	{e5, time_semibiscroma/2},
+	{e5b, time_semibiscroma/2},
+	{e5, time_semibiscroma/2},
+	{e5b, time_semibiscroma/2},
+	{d5, time_semibiscroma/2},
+	{e5b, time_semibiscroma/2},
+	{d5, time_semibiscroma/2},
+	{d5b, time_semibiscroma/2},
+	{d5, time_semibiscroma/2},
+	{d5b, time_semibiscroma/2},
+	{c5, time_semibiscroma/2},
+	{d5b, time_semibiscroma/2},
+	{c5, time_semibiscroma/2},
+	{b4, time_semibiscroma/2},
+	{b4b, time_semibiscroma/2},
+	{b4, time_semibiscroma/2},
+	{b4b, time_semibiscroma/2},
+	{a4, time_semibiscroma/2},
+	{b4b, time_semibiscroma/2},
+	{a4, time_semibiscroma/2},
+	{a4b, time_semibiscroma/2},
+	{a4, time_semibiscroma/2},
+	{pause, time_semibiscroma/2},
+	{g4, time_semibiscroma/2},
+	{b4, time_semibiscroma/2},
+	{d5, time_semibiscroma/2},
+	{pause, time_semibiscroma},
+	{g4, time_semibiscroma/2},
+	{b4, time_semibiscroma/2},
+	{d5, time_semibiscroma/2},
+};
+
+
 
 int down = 0;
 void RIT_IRQHandler (void)
@@ -70,22 +166,49 @@ void RIT_IRQHandler (void)
 	}
 	// TODO fix speaker
 	//i can reset the rit bot i configured in the RIT interrupt init to reset and count
-	static int currentNote = 0;
+	static int currentEatNote = 0;
+	static int currentStartNote = 0;
+	static int currentDeathNote =0;
 	static int ticks = 0;
+
+	if(playDeath== 1){
+		if(!isNotePlaying()){
+			++ticks;
+			if(ticks == UPTICKS){
+				ticks = 0;
+				playNote(death[currentDeathNote ++]);
+			}
+			if(currentDeathNote ==(sizeof(death)/sizeof(death[0]))){
+				currentDeathNote = 0;
+				playDeath=0;
+			}
+		}
+	}
 	
 	if(playEat== 1){
-		if(!isNotePlaying())
-		{
+		if(!isNotePlaying()){
 			++ticks;
-			if(ticks == UPTICKS)
-			{
+			if(ticks == UPTICKS){
 				ticks = 0;
-				playNote(eat[currentNote++]);
+				playNote(eat[currentEatNote++]);
 			}
-			if(currentNote == 3)
-			{
-				currentNote = 0;
+			if(currentEatNote ==(sizeof(eat)/sizeof(eat[0]))){
+				currentEatNote = 0;
 				playEat =0;
+			}
+		}
+	}
+	
+	if(playStart== 1 && gameStatus==1){
+		if(!isNotePlaying()){
+			++ticks;
+			if(ticks == UPTICKS){
+				ticks = 0;
+				playNote(start[currentStartNote++]);
+			}
+			if(currentStartNote == (sizeof(start)/sizeof(start[0]))){
+				currentStartNote = 0;
+				playStart =0;
 			}
 		}
 	}

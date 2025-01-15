@@ -46,7 +46,7 @@ void TIMER0_IRQHandler (void){
 	currentValue -= 410;
 	currentValue /= 1;
 	currentValue += 410;
-	LPC_DAC->DACR = currentValue <<4; //volume
+	LPC_DAC->DACR = currentValue <<6; //volume
 	sineticks++;
 	if(sineticks==45) sineticks=0;
 	
