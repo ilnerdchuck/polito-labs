@@ -563,22 +563,22 @@ void animateFrame(){
 		if(dir == pmUp){
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET-pacmanState.aFrame;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM;
-			DrawBlank(Ypos,Xpos+1,Black);
+			//DrawBlank(Ypos,Xpos+1,Black);
 		}else if(dir== pmDown){
 			
 			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+pacmanState.aFrame;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM;
-			DrawBlank(Ypos,Xpos-1,Black);
+			//DrawBlank(Ypos,Xpos-1,Black);
 		}else if(dir == pmLeft){
 			
 			Xpos = pacmanState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
 			Ypos = pacmanState.pmOldYpos*CELL_DIM-pacmanState.aFrame;
-			DrawBlank(Ypos+1,Xpos,Black);
+			//DrawBlank(Ypos+1,Xpos,Black);
 		}else if(dir == pmRight){
 			
 			Xpos = (pacmanState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
 			Ypos = (pacmanState.pmOldYpos*CELL_DIM)+pacmanState.aFrame;
-			DrawBlank(Ypos-1,Xpos,Black);
+			//DrawBlank(Ypos-1,Xpos,Black);
 		}
 		if(pacmanState.aFrame == 1 ||pacmanState.aFrame == 2 || pacmanState.aFrame == 3 || pacmanState.aFrame == 4 ||pacmanState.aFrame == 7){
 			DrawFilledPacman(Ypos, Xpos, Yellow,Black);
@@ -626,19 +626,15 @@ void animateBlinkyFrame(){
 		if(dir == pmUp){
 			Xpos = blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET-blinkyState.aFrame;
 			Ypos = blinkyState.pmOldYpos*CELL_DIM;
-			DrawBlank(Ypos,Xpos+1,Black);
 		}else if(dir== pmDown){
 			Xpos = (blinkyState.pmOldXpos*CELL_DIM)+TEXT_OFFSET+blinkyState.aFrame;
 			Ypos = blinkyState.pmOldYpos*CELL_DIM;
-			DrawBlank(Ypos,Xpos-1,Black);
 		}else if(dir == pmLeft){
 			Xpos = blinkyState.pmOldXpos*CELL_DIM+TEXT_OFFSET;
 			Ypos = blinkyState.pmOldYpos*CELL_DIM-blinkyState.aFrame;
-			DrawBlank(Ypos+1,Xpos,Black);
 		}else if(dir == pmRight){
 			Xpos = (blinkyState.pmOldXpos*CELL_DIM)+TEXT_OFFSET;
 			Ypos = (blinkyState.pmOldYpos*CELL_DIM)+blinkyState.aFrame;
-			DrawBlank(Ypos-1,Xpos,Black);
 		}
 		if(powerUP==0){
 			DrawBlinky(Ypos, Xpos,dir,Red,Black);
@@ -724,7 +720,7 @@ void updatePacmanPos(pmDir nextDir){
 			playerPoints += 100;
 			blinkyState.pmCurrDir = pmLeft;
 			blinkyState.pmNextDir = pmLeft;
-			
+			ghostSpawn = 3;
 	}
 	
 	if(nextDir == pmStuck){
@@ -797,6 +793,7 @@ void updatePacmanPos(pmDir nextDir){
 			playerPoints += 100;
 			blinkyState.pmCurrDir = pmLeft;
 			blinkyState.pmNextDir = pmLeft;
+			ghostSpawn = 3;
 	}
 	pacmanState.pmCurrDir = nextDir;
 	pacmanState.aFrame = 0;
@@ -873,6 +870,7 @@ void updateBlinkyPos(){
 			playerPoints += 100;
 			blinkyState.pmCurrDir = pmLeft;
 			blinkyState.pmNextDir = pmLeft;
+			ghostSpawn = 3;
 			return;
 	}
 	
@@ -885,12 +883,23 @@ void updateBlinkyPos(){
 			//chiamo il mio fantastico algoritmo di scelta della direzione
 			if((CheckIfWall(GetNextBlinkyCellType(pmUp))==-1) && blinkyState.pmXpos > pacmanState.pmXpos ){
 				blinkyState.pmNextDir = pmUp;
+			}else if((CheckIfWall(GetNextBlinkyCellType(pmLeft))==-1) && blinkyState.pmYpos > pacmanState.pmYpos ){
+				blinkyState.pmNextDir = pmLeft;
 			}else if((CheckIfWall(GetNextBlinkyCellType(pmDown)) == -1) && blinkyState.pmXpos < pacmanState.pmXpos){
 				blinkyState.pmNextDir = pmDown;
 			}else if((CheckIfWall(GetNextBlinkyCellType(pmRight)) ==-1) && blinkyState.pmYpos < pacmanState.pmYpos ){
 				blinkyState.pmNextDir = pmRight;
-			}else if((CheckIfWall(GetNextBlinkyCellType(pmLeft))==-1) && blinkyState.pmYpos > pacmanState.pmYpos ){
-				blinkyState.pmNextDir = pmLeft;
+			}else{
+				//take anything avaialble
+				if((CheckIfWall(GetNextBlinkyCellType(pmRight)) ==-1)){
+				blinkyState.pmNextDir = pmRight;
+				}else if((CheckIfWall(GetNextBlinkyCellType(pmUp))==-1)){
+					blinkyState.pmNextDir = pmUp;
+				}else if((CheckIfWall(GetNextBlinkyCellType(pmLeft))==-1)){
+					blinkyState.pmNextDir = pmLeft;
+				}else if((CheckIfWall(GetNextBlinkyCellType(pmDown)) == -1)){
+					blinkyState.pmNextDir = pmDown;
+				}
 			}
 		}else{
 			//se gioco in spauro
@@ -985,6 +994,7 @@ void updateBlinkyPos(){
 			blinkyState.pmOldYpos = blinkyState.pmYpos;
 			blinkyState.pmCurrDir = pmLeft;
 			blinkyState.pmNextDir = pmLeft;
+			ghostSpawn = 3;
 			return;
 	}
 	

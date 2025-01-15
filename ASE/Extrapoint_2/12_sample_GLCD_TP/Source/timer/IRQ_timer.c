@@ -66,7 +66,7 @@ void TIMER0_IRQHandler (void){
 ******************************************************************************/
 void TIMER1_IRQHandler (void){
 	
-	if(counter%powerUPspeed == 0){
+	if(counter%powerUPspeed == 0 && ghostSpawn == 0){
 		//---------------Blinky Updating----------------------------
 		if(blinkyState.aFrame<8){
 			animateBlinkyFrame();
@@ -127,6 +127,9 @@ void TIMER2_IRQHandler (void){
 	}else{
 		--powerUP;
 	}
+	
+	ghostSpawn = ghostSpawn==0?ghostSpawn:ghostSpawn-1;
+	
 	SendCanInfo();
 	if(!gameTime){
 		SetGameOver();
