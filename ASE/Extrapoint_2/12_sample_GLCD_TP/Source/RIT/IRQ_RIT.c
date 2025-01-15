@@ -129,6 +129,27 @@ NOTE death[] =
 	{d5, time_semibiscroma/2},
 };
 
+NOTE win[] = 
+{
+    {b3b, time_croma},
+		{pause, time_croma},
+		{g3b, time_croma},
+		{pause, time_croma*3},
+		{g3b, time_croma},
+		{e3b, time_croma},
+		{g3b, time_croma},
+		{g3b, time_croma},
+		{pause, time_croma*3},
+		{g3b, time_croma},
+		{e3b, time_croma},
+		{g3b, time_croma},
+		{g3b, time_croma},
+		{pause, time_croma*3},
+		{g3b, time_croma},
+		{pause, time_croma*2},
+		{b3b, time_croma},
+		
+};
 
 
 int down = 0;
@@ -169,8 +190,23 @@ void RIT_IRQHandler (void)
 	static int currentEatNote = 0;
 	static int currentStartNote = 0;
 	static int currentDeathNote =0;
+	static int currentWinNote =0;
 	static int ticks = 0;
 
+	if(playWin== 1){
+		if(!isNotePlaying()){
+			++ticks;
+			if(ticks == UPTICKS){
+				ticks = 0;
+				playNote(win[currentWinNote++]);
+			}
+			if(currentWinNote ==(sizeof(win)/sizeof(win[0]))){
+				currentWinNote = 0;
+				playWin=0;
+			}
+		}
+	}
+	
 	if(playDeath== 1){
 		if(!isNotePlaying()){
 			++ticks;

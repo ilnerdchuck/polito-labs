@@ -55,6 +55,7 @@ uint8_t playerLives = 1;		//Handles
 uint8_t playEat = 0;				//Handle sound 
 uint8_t playStart = 1;
 uint8_t playDeath= 0;
+uint8_t playWin= 0;
 uint8_t powerUP = 0;
 uint8_t ghostSpawn = 0;
 uint16_t gamePoints = 0; 		//Handles how many white points are in the game 

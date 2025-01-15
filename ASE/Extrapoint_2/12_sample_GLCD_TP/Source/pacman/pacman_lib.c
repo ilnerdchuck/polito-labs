@@ -1156,10 +1156,11 @@ void SetGameOver(){
 void SetGameWon(){
 	//per pausare disablito tutti i timer ez
 	gameStatus = 2;
+	playWin = 1;
 	//disable_timer(0);
 	disable_timer(1);
 	disable_timer(2);
-	disable_RIT();
+	//disable_RIT();
 	DrawMiddleText();
 	return;
 }
